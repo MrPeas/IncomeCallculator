@@ -3,7 +3,6 @@ package income.view;
 import income.Main;
 import income.model.JobsDetailsEntity;
 import income.model.JobsEntity;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 import javafx.fxml.FXML;
@@ -13,14 +12,14 @@ import javafx.scene.control.TableView;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by Janusz on 31.10.2016.
+ * Control give access to JobOverview.fxml
  */
-public class ControlerJobOverview {
+public class JobOverviewController {
 
     @FXML
     private TableView<JobsEntity> jobsTable;
@@ -63,7 +62,15 @@ public class ControlerJobOverview {
                 addListener((observable, oldValue, newValue) -> showJobDetail(newValue));
 
     }
+@FXML
+public void handleNewJob(){
+    JobsEntity job = new JobsEntity();
+    boolean okClicked=main.showEditJob(job);
+    if(okClicked){
+        main.getJobs().add(job);
+    }
 
+    }
     private void showJobDetail(JobsEntity job) {
         main.clearJobsDetails();
         if (job != null) {

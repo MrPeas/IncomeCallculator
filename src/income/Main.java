@@ -1,9 +1,9 @@
 package income;
 
-import income.model.JobsDetailsDao;
 import income.model.JobsDetailsEntity;
 import income.model.JobsEntity;
-import income.view.ControlerJobOverview;
+import income.view.EditJobController;
+import income.view.JobOverviewController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class Main extends Application {
 
     }
 
-    void initMenuBar() throws IOException {
+    private void initMenuBar() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/UpBar.fxml"));
         Parent root = loader.load();
         barMenu = (BorderPane) root;
@@ -51,12 +52,37 @@ public class Main extends Application {
         }
     }
 
-    void showJobOverwiev() throws IOException {
+    public void showJobOverwiev() throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/JobOverview.fxml"));
         AnchorPane jobOverview = loader.load();
         barMenu.setCenter(jobOverview);
-        ControlerJobOverview controller = loader.getController();
+        JobOverviewController controller = loader.getController();
         controller.setMain(this);
+    }
+
+    public boolean showEditJob(JobsEntity job) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(Main.class.getResource("view/EditJobDialog.fxml"));
+            AnchorPane dialog = loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edycja pracy");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(dialog);
+            dialogStage.setScene(scene);
+
+            EditJobController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setJob(job);
+
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+        }catch (IOException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void main(String[] args) {
@@ -83,11 +109,12 @@ public class Main extends Application {
         jobsDetails.clear();
     }
 
-    public List<JobsDetailsEntity> findJobsByYear(JobsEntity job, int year){
-        return controller.jobsDetailsByYear(job,year);
+    public List<JobsDetailsEntity> findJobsByYear(JobsEntity job, int year) {
+        return controller.jobsDetailsByYear(job, year);
     }
-    public List<JobsDetailsEntity> findJobsByMonth(JobsEntity job, int month){
-        return controller.jobsDetailsByMonth(job,month);
+
+    public List<JobsDetailsEntity> findJobsByMonth(JobsEntity job, int month) {
+        return controller.jobsDetailsByMonth(job, month);
     }
 
 }

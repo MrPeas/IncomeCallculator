@@ -13,6 +13,7 @@ public class Controller {
 private Main main;
     private JobsDAO jobs;
     private JobsDetailsDao jobsDetails=new JobsDetailsDao();
+
     public Controller(Main main){
         this.main=main;
     }
@@ -30,6 +31,13 @@ private Main main;
      }
     public List<JobsDetailsEntity> jobsDetailsByMonth(JobsEntity job,int month){
         return jobsDetails.findJobsDetailsByMonth(job,month);
+    }
+
+    public void insertJob(JobsEntity job){
+        jobs.insertJob(job);
+    }
+    public void editJob(JobsEntity job){
+        jobs.editJob(job);
     }
 
 }

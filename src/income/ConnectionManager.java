@@ -13,7 +13,7 @@ public class ConnectionManager {
     private static String username = "user";
     private static String password = "T3stP@sword";
     private static Connection con;
-    private static String urlstring;
+    private ConnectionManager(){}
 
     public static Connection getConnection() {
         try {

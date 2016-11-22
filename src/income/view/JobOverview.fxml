@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
@@ -24,7 +25,7 @@
                                 <Font size="30.0" />
                             </font>
                         </Label>
-                  <Button layoutX="52.0" layoutY="348.0" mnemonicParsing="false" text="Podsumowanie" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button layoutX="52.0" layoutY="348.0" mnemonicParsing="false" onAction="#handleEditJob" text="Edytuj prace" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   <Button layoutX="108.0" layoutY="508.0" mnemonicParsing="false" onAction="#handleNewJob" text="Dodaj prace" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                     </children>
                 </AnchorPane>

@@ -26,13 +26,21 @@ public class Main extends Application {
     private ObservableList<JobsEntity> jobs = FXCollections.observableArrayList();
     private ObservableList<JobsDetailsEntity> jobsDetails = FXCollections.observableArrayList();
     private Controller controller = new Controller(this);
+    private long userID=1;
+
+    public long getUserID() {
+        return userID;
+    }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Income");
         initMenuBar();
-        showJobOverwiev();
+        showJobOverview();
 
     }
 
@@ -52,7 +60,7 @@ public class Main extends Application {
         }
     }
 
-    public void showJobOverwiev() throws IOException {
+    public void showJobOverview() throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/JobOverview.fxml"));
         AnchorPane jobOverview = loader.load();
         barMenu.setCenter(jobOverview);
@@ -79,14 +87,10 @@ public class Main extends Application {
             dialogStage.showAndWait();
 
             return controller.isOkClicked();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
     public ObservableList<JobsEntity> getJobs() {
@@ -115,6 +119,13 @@ public class Main extends Application {
 
     public List<JobsDetailsEntity> findJobsByMonth(JobsEntity job, int month) {
         return controller.jobsDetailsByMonth(job, month);
+    }
+
+    public void insertJob(JobsEntity job){
+        controller.insertJob(job);
+    }
+    public void editJob(JobsEntity job){
+        controller.editJob(job);
     }
 
 }

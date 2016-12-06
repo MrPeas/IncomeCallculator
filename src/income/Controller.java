@@ -39,5 +39,8 @@ private Main main;
     public void editJob(JobsEntity job){
         jobs.editJob(job);
     }
+    public void insertJobDetail(JobsDetailsEntity jobDetails){
+        jobsDetails.insertJobDetail(jobDetails);
+    }
 
 }

@@ -3,6 +3,7 @@ package income;
 import income.model.JobsDetailsEntity;
 import income.model.JobsEntity;
 import income.view.EditJobController;
+import income.view.EditJobDetailController;
 import income.view.JobOverviewController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -26,11 +27,12 @@ public class Main extends Application {
     private ObservableList<JobsEntity> jobs = FXCollections.observableArrayList();
     private ObservableList<JobsDetailsEntity> jobsDetails = FXCollections.observableArrayList();
     private Controller controller = new Controller(this);
-    private long userID=1;
+    private long userID = 1;
 
     public long getUserID() {
         return userID;
     }
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -93,6 +95,32 @@ public class Main extends Application {
         }
     }
 
+    public boolean showEditJobDetails(JobsEntity job,JobsDetailsEntity jodDetails) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(Main.class.getResource("view/EditJobDetailDialog.fxml"));
+            AnchorPane dialog = loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edycja szczegółów pracy");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(dialog);
+            dialogStage.setScene(scene);
+
+            EditJobDetailController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setJob(job);
+            controller.setJobDetail(jodDetails);
+
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public ObservableList<JobsEntity> getJobs() {
         return jobs;
     }
@@ -121,11 +149,15 @@ public class Main extends Application {
         return controller.jobsDetailsByMonth(job, month);
     }
 
-    public void insertJob(JobsEntity job){
+    public void insertJob(JobsEntity job) {
         controller.insertJob(job);
     }
-    public void editJob(JobsEntity job){
+
+    public void editJob(JobsEntity job) {
         controller.editJob(job);
     }
 
+    public void insertJobDetail(JobsDetailsEntity jobDetail) {
+        controller.insertJobDetail(jobDetail);
+    }
 }

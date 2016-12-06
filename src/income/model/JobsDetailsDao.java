@@ -84,6 +84,25 @@ public class JobsDetailsDao {
             jobsDetails.add(temp);
         }
         return jobsDetails;
+    }
 
+    public boolean insertJobDetail(JobsDetailsEntity jobDetails) {
+        String query = "INSERT INTO JOBS_DETAILS(WOKR_DATE, INCOME, HOURS, ID_JOB) " +
+                "VALUES ('" + jobDetails.getWokrDate() + "','" + jobDetails.getIncome() + "'," + jobDetails.getHours() + "," + jobDetails.getIdJob() + ")";
+        return updateJobDetailQuery(query, jobDetails);
+    }
+
+    private boolean updateJobDetailQuery(String query, JobsDetailsEntity job) {
+        con = ConnectionManager.getConnection();
+        Statement stmnt;
+        try {
+            stmnt = con.createStatement();
+            stmnt.executeUpdate(query);
+        } catch (SQLException e) {
+            System.err.print(e.getSQLState());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

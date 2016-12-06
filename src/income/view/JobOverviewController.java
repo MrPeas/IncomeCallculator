@@ -74,18 +74,32 @@ public class JobOverviewController {
             main.getJobs().add(job);
         }
     }
-@FXML
-public void handleEditJob(){
-    JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-    main.getJobs().remove(selectedJob);
-    if(selectedJob!=null){
-        boolean okClicked=main.showEditJob(selectedJob);
-        if(okClicked){
-            main.editJob(selectedJob);
-            main.getJobs().add(selectedJob);
+
+    @FXML
+    public void handleEditJob() {
+        JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
+        main.getJobs().remove(selectedJob);
+        if (selectedJob != null) {
+            boolean okClicked = main.showEditJob(selectedJob);
+            if (okClicked) {
+                main.editJob(selectedJob);
+                main.getJobs().add(selectedJob);
+            }
         }
     }
-}
+
+    @FXML
+    public void handleNewJobDetail(){
+        JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
+        JobsDetailsEntity jobDetail=new JobsDetailsEntity();
+        if (selectedJob != null) {
+            boolean okClicked = main.showEditJobDetails(selectedJob,jobDetail);
+            if (okClicked) {
+                main.insertJobDetail(jobDetail);
+                setJobDetail(selectedJob);
+            }
+        }
+    }
     public void setMain(Main main) {
         this.main = main;
         jobsTable.setItems(main.getJobs());
@@ -95,7 +109,7 @@ public void handleEditJob(){
         main.clearJobsDetails();
         if (job != null) {
             main.addJobsDetails(job);
-            SummaryIncome summaryIncome=new SummaryIncome(job);
+            SummaryIncome summaryIncome = new SummaryIncome(job);
             setJobsDetailsTable(main.getJobsDetails());
             setWorkHourColumn();
             setDateColumn();
@@ -127,10 +141,11 @@ public void handleEditJob(){
     }
 
 
-    private class SummaryIncome{
+    private class SummaryIncome {
         private JobsEntity job;
-        SummaryIncome(JobsEntity job){
-            this.job=job;
+
+        SummaryIncome(JobsEntity job) {
+            this.job = job;
         }
 
         private void setMonthHours() {
@@ -152,6 +167,7 @@ public void handleEditJob(){
             yearIncome.setText(currentYearIncome(main.findJobsByYear
                     (job, Calendar.getInstance().get(Calendar.YEAR))));
         }
+
         private String currentYearIncome(List<JobsDetailsEntity> jobDetail) {
             BigDecimal income = new BigDecimal(0);
             for (JobsDetailsEntity temp : jobDetail) {

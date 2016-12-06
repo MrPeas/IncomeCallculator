@@ -1,9 +1,9 @@
 package income;
 
-import income.model.JobsDetailsDao;
 import income.model.JobsDetailsEntity;
 import income.model.JobsEntity;
-import income.view.ControlerJobOverview;
+import income.view.EditJobController;
+import income.view.JobOverviewController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -25,17 +26,25 @@ public class Main extends Application {
     private ObservableList<JobsEntity> jobs = FXCollections.observableArrayList();
     private ObservableList<JobsDetailsEntity> jobsDetails = FXCollections.observableArrayList();
     private Controller controller = new Controller(this);
+    private long userID=1;
+
+    public long getUserID() {
+        return userID;
+    }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Income");
         initMenuBar();
-        showJobOverwiev();
+        showJobOverview();
 
     }
 
-    void initMenuBar() throws IOException {
+    private void initMenuBar() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/UpBar.fxml"));
         Parent root = loader.load();
         barMenu = (BorderPane) root;
@@ -51,16 +60,37 @@ public class Main extends Application {
         }
     }
 
-    void showJobOverwiev() throws IOException {
+    public void showJobOverview() throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/JobOverview.fxml"));
         AnchorPane jobOverview = loader.load();
         barMenu.setCenter(jobOverview);
-        ControlerJobOverview controller = loader.getController();
+        JobOverviewController controller = loader.getController();
         controller.setMain(this);
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    public boolean showEditJob(JobsEntity job) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(Main.class.getResource("view/EditJobDialog.fxml"));
+            AnchorPane dialog = loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edycja pracy");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(dialog);
+            dialogStage.setScene(scene);
+
+            EditJobController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setJob(job);
+
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public ObservableList<JobsEntity> getJobs() {
@@ -83,11 +113,19 @@ public class Main extends Application {
         jobsDetails.clear();
     }
 
-    public List<JobsDetailsEntity> findJobsByYear(JobsEntity job, int year){
-        return controller.jobsDetailsByYear(job,year);
+    public List<JobsDetailsEntity> findJobsByYear(JobsEntity job, int year) {
+        return controller.jobsDetailsByYear(job, year);
     }
-    public List<JobsDetailsEntity> findJobsByMonth(JobsEntity job, int month){
-        return controller.jobsDetailsByMonth(job,month);
+
+    public List<JobsDetailsEntity> findJobsByMonth(JobsEntity job, int month) {
+        return controller.jobsDetailsByMonth(job, month);
+    }
+
+    public void insertJob(JobsEntity job){
+        controller.insertJob(job);
+    }
+    public void editJob(JobsEntity job){
+        controller.editJob(job);
     }
 
 }

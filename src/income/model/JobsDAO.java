@@ -2,8 +2,6 @@ package income.model;
 
 import income.ConnectionManager;
 
-import javax.persistence.*;
-import javax.persistence.spi.PersistenceProvider;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,15 +15,14 @@ import java.util.List;
 public class JobsDAO {
 
     private Connection con;
-    public List<JobsEntity> getJobs() throws SQLException {
-        con=ConnectionManager.getConnection();
-        int x=1;
-        try (
-                Statement stmnt = con.createStatement();
-                ResultSet rs = stmnt.executeQuery("select * from JOBS where JOBS.ID_USER=1")
-        ) {
-            List<JobsEntity> personList = new ArrayList<JobsEntity>() {
-            };
+
+    public List<JobsEntity> getJobs() {
+        con = ConnectionManager.getConnection();
+        Statement stmnt = null;
+        try {
+            stmnt = con.createStatement();
+            ResultSet rs = stmnt.executeQuery("select * from JOBS where JOBS.ID_USER=1");
+            List<JobsEntity> personList = new ArrayList();
             while (rs.next()) {
                 String firstName = rs.getString("name");
                 long id = rs.getLong("id");
@@ -47,9 +44,31 @@ public class JobsDAO {
             return personList;
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            con.close();
         }
         return null;
+    }
+    //TODO add alert when add failed
+    public boolean insertJob(JobsEntity job){
+        String query="INSERT INTO JOBS(NAME, DESCRIBE, DEAFULT_INCOME, ID_USER) " +
+                "VALUES ('"+job.getName()+"','"+job.getDescribe()+"',"+job.getDeafultIncome()+","+job.getIdUser()+")";
+        return updateJobQuery(query,job);
+    }
+    public boolean editJob(JobsEntity job){
+       String query="UPDATE JOBS "+"SET " +
+               "NAME='"+job.getName()+"', DESCRIBE='"+job.getDescribe()+"',DEAFULT_INCOME="+job.getDeafultIncome()+" WHERE JOBS.ID="+job.getId();
+        return updateJobQuery(query,job);
+    }
+    private boolean updateJobQuery(String query,JobsEntity job){
+        con = ConnectionManager.getConnection();
+        Statement stmnt;
+        try{
+            stmnt = con.createStatement();
+            stmnt.executeUpdate(query);
+        }catch (SQLException e){
+            System.err.print( e.getSQLState());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

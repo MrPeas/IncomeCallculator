@@ -1,123 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="H2 - income">
-  <database-model serializer="dbm" rdbms="H2" format-version="2.6">
-    <database id="1" name="INCOME">
-      <visible>1</visible>
+  <database-model serializer="dbm" rdbms="H2" format-version="4.0">
+    <root id="1"/>
+    <database id="2" parent="1" name="INCOME">
+      <Current>1</Current>
+      <Visible>1</Visible>
     </database>
-    <schema id="2" parent="1" name="INFORMATION_SCHEMA"/>
-    <schema id="3" parent="1" name="PUBLIC">
-      <visible>1</visible>
+    <schema id="3" parent="2" name="INFORMATION_SCHEMA"/>
+    <schema id="4" parent="2" name="PUBLIC">
+      <Visible>1</Visible>
     </schema>
-    <table id="4" parent="3" name="JOBS"/>
-    <table id="5" parent="3" name="JOBS_DETAILS"/>
-    <table id="6" parent="3" name="USERS"/>
-    <table id="7" parent="3" name="USERS_JOBS_CONNECT"/>
-    <column id="8" parent="4" name="ID">
-      <mandatory>1</mandatory>
-      <data-type>BIGINT(19)|-5</data-type>
-      <sequence-identity>1</sequence-identity>
-      <default-expression>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_E8E551FD_9EC6_4A6A_AE42_15E758211C58)</default-expression>
+    <table id="5" parent="4" name="JOBS"/>
+    <table id="6" parent="4" name="JOBS_DETAILS"/>
+    <table id="7" parent="4" name="USERS"/>
+    <column id="8" parent="5" name="ID">
+      <Position>1</Position>
+      <DataType>BIGINT(19)|-5</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <DefaultExpression>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_E8E551FD_9EC6_4A6A_AE42_15E758211C58)</DefaultExpression>
     </column>
-    <column id="9" parent="4" name="NAME">
-      <mandatory>1</mandatory>
-      <data-type>VARCHAR(55)|12</data-type>
+    <column id="9" parent="5" name="NAME">
+      <Position>2</Position>
+      <DataType>VARCHAR(55)|12</DataType>
+      <NotNull>1</NotNull>
     </column>
-    <column id="10" parent="4" name="DESCRIBE">
-      <data-type>CLOB(max)|2005</data-type>
+    <column id="10" parent="5" name="DESCRIBE">
+      <Position>3</Position>
+      <DataType>CLOB(max)|2005</DataType>
     </column>
-    <column id="11" parent="4" name="DEAFULT_INCOME">
-      <data-type>DECIMAL(15,2)|3</data-type>
+    <column id="11" parent="5" name="DEAFULTINCOME">
+      <Position>4</Position>
+      <DataType>DECIMAL(15,2)|3</DataType>
     </column>
-    <column id="12" parent="4" name="ID_USER">
-      <mandatory>1</mandatory>
-      <data-type>BIGINT(19)|-5</data-type>
+    <column id="12" parent="5" name="IDUSER">
+      <Position>5</Position>
+      <DataType>BIGINT(19)|-5</DataType>
+      <NotNull>1</NotNull>
     </column>
-    <key id="13" parent="4" name="CONSTRAINT_2">
-      <name-surrogate>1</name-surrogate>
-      <columns>ID</columns>
-      <primary>1</primary>
+    <key id="13" parent="5" name="CONSTRAINT_2">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>ID</ColNames>
+      <Primary>1</Primary>
     </key>
-    <foreign-key id="14" parent="4" name="JOBS_USERS_ID_FK">
-      <columns>ID_USER</columns>
-      <ref-key>~.USERS.CONSTRAINT_4</ref-key>
-      <cascade-update-rule>update</cascade-update-rule>
-      <cascade-delete-rule>delete</cascade-delete-rule>
+    <foreign-key id="14" parent="5" name="JOBS_USERS_ID_FK">
+      <ColNames>IDUSER</ColNames>
+      <RefSchemaName>PUBLIC</RefSchemaName>
+      <RefTableName>USERS</RefTableName>
+      <RefKeyName>CONSTRAINT_4</RefKeyName>
+      <RefColNames>ID</RefColNames>
     </foreign-key>
-    <column id="15" parent="5" name="ID">
-      <mandatory>1</mandatory>
-      <data-type>BIGINT(19)|-5</data-type>
-      <sequence-identity>1</sequence-identity>
-      <default-expression>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_DC8773F7_ACAC_44F3_93DF_2894530AA7A1)</default-expression>
+    <column id="15" parent="6" name="ID">
+      <Position>1</Position>
+      <DataType>BIGINT(19)|-5</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <DefaultExpression>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_DC8773F7_ACAC_44F3_93DF_2894530AA7A1)</DefaultExpression>
     </column>
-    <column id="16" parent="5" name="WOKR_DATE">
-      <mandatory>1</mandatory>
-      <data-type>DATE(8)|91</data-type>
+    <column id="16" parent="6" name="WOKR_DATE">
+      <Position>2</Position>
+      <DataType>DATE(8)|91</DataType>
+      <NotNull>1</NotNull>
     </column>
-    <column id="17" parent="5" name="INCOME">
-      <mandatory>1</mandatory>
-      <data-type>DECIMAL(15,2)|3</data-type>
+    <column id="17" parent="6" name="INCOME">
+      <Position>3</Position>
+      <DataType>DECIMAL(15,2)|3</DataType>
+      <NotNull>1</NotNull>
     </column>
-    <column id="18" parent="5" name="ID_JOB">
-      <mandatory>1</mandatory>
-      <data-type>BIGINT(19)|-5</data-type>
+    <column id="18" parent="6" name="ID_JOB">
+      <Position>4</Position>
+      <DataType>BIGINT(19)|-5</DataType>
+      <NotNull>1</NotNull>
     </column>
-    <column id="19" parent="5" name="HOURS">
-      <data-type>DOUBLE(17)|8</data-type>
+    <column id="19" parent="6" name="HOURS">
+      <Position>5</Position>
+      <DataType>DOUBLE(17)|8</DataType>
     </column>
-    <key id="20" parent="5" name="CONSTRAINT_4D">
-      <name-surrogate>1</name-surrogate>
-      <columns>ID</columns>
-      <primary>1</primary>
+    <key id="20" parent="6" name="CONSTRAINT_4D">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>ID</ColNames>
+      <Primary>1</Primary>
     </key>
-    <foreign-key id="21" parent="5" name="JOB_DETAILS_FK">
-      <columns>ID_JOB</columns>
-      <ref-key>~.JOBS.CONSTRAINT_2</ref-key>
-      <cascade-update-rule>restrict</cascade-update-rule>
-      <cascade-delete-rule>restrict</cascade-delete-rule>
+    <foreign-key id="21" parent="6" name="JOB_DETAILS_FK">
+      <ColNames>ID_JOB</ColNames>
+      <RefSchemaName>PUBLIC</RefSchemaName>
+      <RefTableName>JOBS</RefTableName>
+      <RefKeyName>CONSTRAINT_2</RefKeyName>
+      <RefColNames>ID</RefColNames>
     </foreign-key>
-    <column id="22" parent="6" name="ID">
-      <mandatory>1</mandatory>
-      <data-type>BIGINT(19)|-5</data-type>
-      <sequence-identity>1</sequence-identity>
-      <default-expression>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_6FE2C24C_4A6D_4C8C_9C5F_1A2A37B2C42E)</default-expression>
+    <column id="22" parent="7" name="ID">
+      <Position>1</Position>
+      <DataType>BIGINT(19)|-5</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <DefaultExpression>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_6FE2C24C_4A6D_4C8C_9C5F_1A2A37B2C42E)</DefaultExpression>
     </column>
-    <column id="23" parent="6" name="LOGIN">
-      <mandatory>1</mandatory>
-      <data-type>VARCHAR(55)|12</data-type>
+    <column id="23" parent="7" name="LOGIN">
+      <Position>2</Position>
+      <DataType>VARCHAR(55)|12</DataType>
+      <NotNull>1</NotNull>
     </column>
-    <column id="24" parent="6" name="PASSWORD">
-      <mandatory>1</mandatory>
-      <data-type>VARCHAR(55)|12</data-type>
+    <column id="24" parent="7" name="PASSWORD">
+      <Position>3</Position>
+      <DataType>VARCHAR(55)|12</DataType>
+      <NotNull>1</NotNull>
     </column>
-    <key id="25" parent="6" name="CONSTRAINT_4">
-      <name-surrogate>1</name-surrogate>
-      <columns>ID</columns>
-      <primary>1</primary>
+    <key id="25" parent="7" name="CONSTRAINT_4">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>ID</ColNames>
+      <Primary>1</Primary>
     </key>
-    <column id="26" parent="7" name="ID_JOB">
-      <mandatory>1</mandatory>
-      <data-type>BIGINT(19)|-5</data-type>
-    </column>
-    <column id="27" parent="7" name="ID_USER">
-      <mandatory>1</mandatory>
-      <data-type>BIGINT(19)|-5</data-type>
-    </column>
-    <key id="28" parent="7" name="PK">
-      <columns>ID_USER
-ID_JOB</columns>
-      <primary>1</primary>
-    </key>
-    <foreign-key id="29" parent="7" name="JOB_FK">
-      <columns>ID_JOB</columns>
-      <ref-key>~.JOBS.CONSTRAINT_2</ref-key>
-      <cascade-update-rule>update</cascade-update-rule>
-      <cascade-delete-rule>delete</cascade-delete-rule>
-    </foreign-key>
-    <foreign-key id="30" parent="7" name="USER_FK">
-      <columns>ID_USER</columns>
-      <ref-key>~.USERS.CONSTRAINT_4</ref-key>
-      <cascade-update-rule>update</cascade-update-rule>
-      <cascade-delete-rule>delete</cascade-delete-rule>
-    </foreign-key>
   </database-model>
 </dataSource>

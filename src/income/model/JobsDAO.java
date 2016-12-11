@@ -21,12 +21,12 @@ public class JobsDAO {
         Statement stmnt = null;
         try {
             stmnt = con.createStatement();
-            ResultSet rs = stmnt.executeQuery("select * from JOBS where JOBS.ID_USER=1");
+            ResultSet rs = stmnt.executeQuery("select * from JOBS where JOBS.IDUSER=1");
             List<JobsEntity> personList = new ArrayList();
             while (rs.next()) {
                 String firstName = rs.getString("name");
                 long id = rs.getLong("id");
-                BigDecimal defaultIncome = rs.getBigDecimal("DEAFULT_INCOME");
+                BigDecimal defaultIncome = rs.getBigDecimal("DEAFULTINCOME");
                 if (defaultIncome == null) {
                     defaultIncome = new BigDecimal(0);
                 }
@@ -37,7 +37,7 @@ public class JobsDAO {
                 JobsEntity person = new JobsEntity();
                 person.setId(id);
                 person.setName(firstName);
-                person.setDeafultIncome(defaultIncome);
+                person.setDeafultincome(defaultIncome);
                 person.setDescribe(describe);
                 personList.add(person);
             }
@@ -50,12 +50,12 @@ public class JobsDAO {
     //TODO add alert when add failed
     public boolean insertJob(JobsEntity job){
         String query="INSERT INTO JOBS(NAME, DESCRIBE, DEAFULT_INCOME, ID_USER) " +
-                "VALUES ('"+job.getName()+"','"+job.getDescribe()+"',"+job.getDeafultIncome()+","+job.getIdUser()+")";
+                "VALUES ('"+job.getName()+"','"+job.getDescribe()+"',"+job.getDeafultincome()+","+job.getIdUser()+")";
         return updateJobQuery(query,job);
     }
     public boolean editJob(JobsEntity job){
        String query="UPDATE JOBS "+"SET " +
-               "NAME='"+job.getName()+"', DESCRIBE='"+job.getDescribe()+"',DEAFULT_INCOME="+job.getDeafultIncome()+" WHERE JOBS.ID="+job.getId();
+               "NAME='"+job.getName()+"', DESCRIBE='"+job.getDescribe()+"',DEAFULT_INCOME="+job.getDeafultincome()+" WHERE JOBS.ID="+job.getId();
         return updateJobQuery(query,job);
     }
     private boolean updateJobQuery(String query,JobsEntity job){

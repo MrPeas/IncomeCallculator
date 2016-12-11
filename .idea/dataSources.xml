@@ -1,57 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="IncomeDB/OpenJPA" uuid="b56e9359-810c-44a5-a76c-c555d7cedf0f">
-      <driver-ref>h2.unified</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>$PROJECT_DIR$/META-INF/persistence.xml</remarks>
-      <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:~/income</jdbc-url>
-      <libraries>
-        <library>
-          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/h2-license.txt</url>
-        </library>
-        <library>
-          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/h2-1.4.192.jar</url>
-        </library>
-      </libraries>
-    </data-source>
     <data-source source="LOCAL" name="H2 - income" uuid="5f69b7d3-7b35-4b45-90c0-d10d698da3c6">
       <driver-ref>h2.unified</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:~/income</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="Eclipselink_JPA/EclipseLink" uuid="27e64e6f-4124-403b-bc5d-731a5e434589">
-      <driver-ref>h2.unified</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>$PROJECT_DIR$/META-INF/persistence.xml</remarks>
-      <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:~/income</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="Eclipselink_JPA/Hibernate" uuid="c1b3f73f-a122-4e85-b340-3978e2b84d7a">
-      <driver-ref>h2.unified</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>$PROJECT_DIR$/META-INF/persistence.xml</remarks>
-      <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:~/income</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="Eclipselink_JPA/OpenJPA" uuid="3bcae0c1-5406-48b4-8844-139913c0a73d">
-      <driver-ref>h2.unified</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>$PROJECT_DIR$/META-INF/persistence.xml</remarks>
-      <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:~/income</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="Eclipselink_JPA/TopLink" uuid="89c0388d-ef75-4a6d-9f6b-8b4a7b41b3f2">
-      <driver-ref>h2.unified</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>$PROJECT_DIR$/META-INF/persistence.xml</remarks>
       <jdbc-driver>org.h2.Driver</jdbc-driver>
       <jdbc-url>jdbc:h2:~/income</jdbc-url>
     </data-source>

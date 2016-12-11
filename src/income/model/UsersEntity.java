@@ -13,7 +13,6 @@ public class UsersEntity {
     private String login;
     private String password;
     private Collection<JobsEntity> jobsesById;
-    private Collection<UsersJobsConnectEntity> usersJobsConnectsById;
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -67,21 +66,4 @@ public class UsersEntity {
         return result;
     }
 
-    @OneToMany(mappedBy = "usersByIdUser")
-    public Collection<JobsEntity> getJobsesById() {
-        return jobsesById;
-    }
-
-    public void setJobsesById(Collection<JobsEntity> jobsesById) {
-        this.jobsesById = jobsesById;
-    }
-
-    @OneToMany(mappedBy = "usersByIdUser")
-    public Collection<UsersJobsConnectEntity> getUsersJobsConnectsById() {
-        return usersJobsConnectsById;
-    }
-
-    public void setUsersJobsConnectsById(Collection<UsersJobsConnectEntity> usersJobsConnectsById) {
-        this.usersJobsConnectsById = usersJobsConnectsById;
-    }
 }

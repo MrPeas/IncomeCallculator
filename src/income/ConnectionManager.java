@@ -14,7 +14,6 @@ public class ConnectionManager {
     private static String password = "T3stP@sword";
     private static Connection con;
     private ConnectionManager(){}
-
     public static Connection getConnection() {
         try {
             Class.forName(driverName);

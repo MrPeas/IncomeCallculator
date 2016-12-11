@@ -92,6 +92,7 @@ public class JobsDetailsEntity {
     }
 
     @ManyToOne
+    @PrimaryKeyJoinColumn(name = "ID_JOB", referencedColumnName = "ID")
     @JoinColumn(name = "ID_JOB", referencedColumnName = "ID", nullable = false)
     public JobsEntity getJobsByIdJob() {
         return jobsByIdJob;

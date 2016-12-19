@@ -49,6 +49,8 @@
       <RefTableName>USERS</RefTableName>
       <RefKeyName>CONSTRAINT_4</RefKeyName>
       <RefColNames>ID</RefColNames>
+      <OnDelete>delete</OnDelete>
+      <OnUpdate>update</OnUpdate>
     </foreign-key>
     <column id="15" parent="6" name="ID">
       <Position>1</Position>
@@ -87,6 +89,8 @@
       <RefTableName>JOBS</RefTableName>
       <RefKeyName>CONSTRAINT_2</RefKeyName>
       <RefColNames>ID</RefColNames>
+      <OnDelete>delete</OnDelete>
+      <OnUpdate>update</OnUpdate>
     </foreign-key>
     <column id="22" parent="7" name="ID">
       <Position>1</Position>

@@ -8,8 +8,15 @@ import java.sql.Date;
  * Created by Janusz on 01.11.2016.
  */
 @Entity
-@Table(name = "JOBS_DETAILS", schema = "PUBLIC", catalog = "INCOME")
-public class JobsDetailsEntity {
+@NamedQueries({
+        @NamedQuery(name = "JobDetails.findByIdJob", query = "SELECT T FROM JobDetailsEntity T WHERE T.idJob=:jobId"),
+        @NamedQuery(name = "JobDetails.findByYear&&idJob", query = "SELECT T  FROM JobDetailsEntity T " +
+                "WHERE T.idJob=:jobId AND FUNC('YEAR',T.wokrDate) =:year"),
+        @NamedQuery(name = "JobDetails.findByMonth&&idJob", query = "SELECT T  FROM JobDetailsEntity T " +
+                "WHERE T.idJob=:jobId AND FUNC('MONTH',T.wokrDate) =:month")
+})
+@Table(name = "JOBS_DETAILS", schema = "PUBLIC", catalog = "TEST")
+public class JobDetailsEntity {
     private long id;
     private Date wokrDate;
     private BigDecimal income;
@@ -18,6 +25,7 @@ public class JobsDetailsEntity {
     private JobsEntity jobsByIdJob;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "ID", nullable = false)
     public long getId() {
         return id;
@@ -62,7 +70,7 @@ public class JobsDetailsEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JobsDetailsEntity that = (JobsDetailsEntity) o;
+        JobDetailsEntity that = (JobDetailsEntity) o;
 
         if (id != that.id) return false;
         if (wokrDate != null ? !wokrDate.equals(that.wokrDate) : that.wokrDate != null) return false;

@@ -1,6 +1,6 @@
 package income;
 
-import income.model.JobsDetailsEntity;
+import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
 import income.view.EditJobController;
 import income.view.EditJobDetailController;
@@ -25,7 +25,7 @@ public class Main extends Application {
     private Stage primaryStage;
     private BorderPane barMenu;
     private ObservableList<JobsEntity> jobs = FXCollections.observableArrayList();
-    private ObservableList<JobsDetailsEntity> jobsDetails = FXCollections.observableArrayList();
+    private ObservableList<JobDetailsEntity> jobsDetails = FXCollections.observableArrayList();
     private Controller controller = new Controller(this);
     private long userID = 1;
 
@@ -54,7 +54,7 @@ public class Main extends Application {
         primaryStage.show();
 
         try {
-            controller.LoadJobsDataFromBase();
+            controller.LoadJobsDataFromBase(userID);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -67,6 +67,7 @@ public class Main extends Application {
         AnchorPane jobOverview = loader.load();
         barMenu.setCenter(jobOverview);
         JobOverviewController controller = loader.getController();
+        controller.setDialogStage(primaryStage);
         controller.setMain(this);
     }
 
@@ -95,7 +96,7 @@ public class Main extends Application {
         }
     }
 
-    public boolean showEditJobDetails(JobsEntity job,JobsDetailsEntity jodDetails) {
+    public boolean showEditJobDetails(JobsEntity job, JobDetailsEntity jodDetails) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(Main.class.getResource("view/EditJobDetailDialog.fxml"));
@@ -125,12 +126,12 @@ public class Main extends Application {
         return jobs;
     }
 
-    public ObservableList<JobsDetailsEntity> getJobsDetails() {
+    public ObservableList<JobDetailsEntity> getJobsDetails() {
         return jobsDetails;
     }
 
     public void addJobsDetails(JobsEntity jobs) {
-        this.jobsDetails.addAll(controller.loadJobsDetailFromBase(jobs));
+        this.jobsDetails.addAll(controller.loadJobsDetailFromBase(jobs.getId()));
     }
 
     public void addJobs(List<JobsEntity> jobs) {
@@ -141,12 +142,12 @@ public class Main extends Application {
         jobsDetails.clear();
     }
 
-    public List<JobsDetailsEntity> findJobsByYear(JobsEntity job, int year) {
-        return controller.jobsDetailsByYear(job, year);
+    public List<JobDetailsEntity> findJobsByYear(JobsEntity job, int year) {
+        return controller.jobsDetailsByYear(job.getId(), year);
     }
 
-    public List<JobsDetailsEntity> findJobsByMonth(JobsEntity job, int month) {
-        return controller.jobsDetailsByMonth(job, month);
+    public List<JobDetailsEntity> findJobsByMonth(JobsEntity job, int month) {
+        return controller.jobsDetailsByMonth(job.getId(), month);
     }
 
     public void insertJob(JobsEntity job) {
@@ -157,7 +158,15 @@ public class Main extends Application {
         controller.editJob(job);
     }
 
-    public void insertJobDetail(JobsDetailsEntity jobDetail) {
+    public void insertJobDetail(JobDetailsEntity jobDetail) {
         controller.insertJobDetail(jobDetail);
+    }
+
+    public void editJobsDetails(JobDetailsEntity jobDetail){
+        controller.editJobDetails(jobDetail);
+    }
+
+    public void removeJob(JobsEntity job){
+        controller.removeJob(job.getId());
     }
 }

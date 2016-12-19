@@ -7,7 +7,7 @@ import java.util.Collection;
  * Created by Janusz on 01.11.2016.
  */
 @Entity
-@Table(name = "USERS", schema = "PUBLIC", catalog = "INCOME")
+@Table(name = "USERS", schema = "PUBLIC", catalog = "TEST")
 public class UsersEntity {
     private long id;
     private String login;

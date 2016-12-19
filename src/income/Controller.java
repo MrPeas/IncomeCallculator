@@ -1,9 +1,9 @@
 package income;
 
 
-import income.model.JobsDAO;
-import income.model.JobsDetailsDao;
-import income.model.JobsDetailsEntity;
+import income.DAO.DAOJobDetailsImpl;
+import income.DAO.DAOJobsImpl;
+import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
 
 import java.sql.SQLException;
@@ -11,36 +11,39 @@ import java.util.List;
 
 public class Controller {
 private Main main;
-    private JobsDAO jobs;
-    private JobsDetailsDao jobsDetails=new JobsDetailsDao();
+    private DAOJobsImpl jobs=new DAOJobsImpl();
+    private DAOJobDetailsImpl jobsDetails=new DAOJobDetailsImpl();
 
     public Controller(Main main){
         this.main=main;
     }
 
-     public void LoadJobsDataFromBase() throws SQLException, ClassNotFoundException {
-         this.jobs=new JobsDAO();
-         main.addJobs(jobs.getJobs());
+     public void LoadJobsDataFromBase(Long id) throws SQLException, ClassNotFoundException {
+         main.addJobs(jobs.findByIdUser(id));
      }
-     public List<JobsDetailsEntity> loadJobsDetailFromBase(JobsEntity job){
-         return jobsDetails.findJobsDetail(job);
+     public List<JobDetailsEntity> loadJobsDetailFromBase(long id){
+         return jobsDetails.findByIdJob(id);
      }
 
-     public List<JobsDetailsEntity> jobsDetailsByYear(JobsEntity job,int year){
-         return jobsDetails.findJobsDetailsByYear(job,year);
+     public List<JobDetailsEntity> jobsDetailsByYear(long id, int year){
+         return jobsDetails.findJobsDetailsByYear(id,year);
      }
-    public List<JobsDetailsEntity> jobsDetailsByMonth(JobsEntity job,int month){
-        return jobsDetails.findJobsDetailsByMonth(job,month);
+    public List<JobDetailsEntity> jobsDetailsByMonth(long id, int month){
+        return jobsDetails.findJobsDetailsByMonth(id,month);
     }
 
     public void insertJob(JobsEntity job){
-        jobs.insertJob(job);
+        jobs.add(job);
     }
     public void editJob(JobsEntity job){
-        jobs.editJob(job);
+        jobs.update(job);
     }
-    public void insertJobDetail(JobsDetailsEntity jobDetails){
-        jobsDetails.insertJobDetail(jobDetails);
+    public void insertJobDetail(JobDetailsEntity jobDetails){
+        jobsDetails.add(jobDetails);
     }
+    public void editJobDetails(JobDetailsEntity jobDetails){
+        jobsDetails.update(jobDetails);
+    }
+    public void removeJob(Long id){jobsDetails.remove(id);}
 
 }

@@ -8,19 +8,22 @@ import java.util.Collection;
  * Created by Janusz on 01.11.2016.
  */
 @Entity
-@NamedQuery(name="JobsEntity.findAll",query = "SELECT e from JobsEntity e")
-@Table(name = "JOBS", schema = "PUBLIC", catalog = "INCOME")
+@NamedQueries({
+        @NamedQuery(name = "JobsEntity.findAll", query = "SELECT e FROM JobsEntity e"),
+        @NamedQuery(name = "JobsEntity.findByUserId", query = "SELECT e FROM JobsEntity e WHERE e.idUser=:id")
+})
+@Table(name = "JOBS", schema = "PUBLIC", catalog = "TEST")
 public class JobsEntity {
     private long id;
     private String name;
     private String describe;
     private BigDecimal deafultIncome;
     private long idUser;
-    private Collection<JobsDetailsEntity> jobsDetailsesById;
+    private Collection<JobDetailsEntity> jobsDetailsesById;
     private BigDecimal deafultincome;
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public long getId() {
         return id;
@@ -86,11 +89,11 @@ public class JobsEntity {
     }
 
     @OneToMany(mappedBy = "jobsByIdJob")
-    public Collection<JobsDetailsEntity> getJobsDetailsesById() {
+    public Collection<JobDetailsEntity> getJobsDetailsesById() {
         return jobsDetailsesById;
     }
 
-    public void setJobsDetailsesById(Collection<JobsDetailsEntity> jobsDetailsesById) {
+    public void setJobsDetailsesById(Collection<JobDetailsEntity> jobsDetailsesById) {
         this.jobsDetailsesById = jobsDetailsesById;
     }
 

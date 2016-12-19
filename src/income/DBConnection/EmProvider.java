@@ -1,5 +1,6 @@
 package income.DBConnection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -25,4 +26,14 @@ public class EmProvider {
             return emf;
         }
     }
+    public EntityManager createEm(){
+        return getEmf().createEntityManager();
+    }
+
+    public void closeEm(EntityManager em){
+        if(em!=null){
+            em.close();
+        }
+    }
+
 }

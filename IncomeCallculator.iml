@@ -6,7 +6,7 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="EclipseLink" />
         <datasource-mapping>
-          <factory-entry name="Eclipselink_JPA" value="89c0388d-ef75-4a6d-9f6b-8b4a7b41b3f2" />
+          <factory-entry name="Eclipselink_JPA" value="0088bb58-fb36-4d51-a1cf-1e3b74e57c0d" />
           <factory-entry name="Entities" value="27e64e6f-4124-403b-bc5d-731a5e434589" />
           <factory-entry name="IncomeEclipseLink" value="5f69b7d3-7b35-4b45-90c0-d10d698da3c6" />
         </datasource-mapping>

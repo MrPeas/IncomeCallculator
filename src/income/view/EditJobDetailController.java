@@ -1,6 +1,6 @@
 package income.view;
 
-import income.model.JobsDetailsEntity;
+import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
 import income.util.AlertUtil;
 import income.util.ConverterUtil;
@@ -19,7 +19,7 @@ import java.sql.Date;
 public class EditJobDetailController {
 
     private Stage dialogStage;
-    private JobsDetailsEntity jobDetail;
+    private JobDetailsEntity jobDetail;
     private JobsEntity job;
     private boolean okClicked = false;
 
@@ -61,7 +61,11 @@ public class EditJobDetailController {
         String errorMessage = "";
         String title = "Złe dane";
         String header = "Wprowadź poprawne dane";
-        if(date==null){
+        try {
+            if (date == null || date.getValue().toString().length()==0) {
+                errorMessage += "Wybierz date\n";
+            }
+        }catch (NullPointerException e){
             errorMessage += "Wybierz date\n";
         }
         if (!ConverterUtil.isParseToBigDecimal(hourlyWage.getText())) {
@@ -81,8 +85,13 @@ public class EditJobDetailController {
         return okClicked;
     }
 
-    public void setJobDetail(JobsDetailsEntity jobDetail) {
+    public void setJobDetail(JobDetailsEntity jobDetail) {
         this.jobDetail = jobDetail;
+        if(jobDetail!=null){
+            amountOfHours.setText(jobDetail.getHours().toString());
+            hourlyWage.setText(jobDetail.getIncome().toString());
+            date.setValue(jobDetail.getWokrDate().toLocalDate());
+        }
     }
 
 }

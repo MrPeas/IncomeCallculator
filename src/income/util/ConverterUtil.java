@@ -16,8 +16,19 @@ public class ConverterUtil {
             return true;
         } catch (NumberFormatException e) {
             return false;
+        } catch (NullPointerException e) {
+            return false;
         }
-        catch (NullPointerException e){
+    }
+
+    public static boolean isParseToString(String text) {
+        try {
+            if (text.length() == 0) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (NullPointerException e) {
             return false;
         }
     }

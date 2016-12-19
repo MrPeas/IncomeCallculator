@@ -5,20 +5,15 @@
    http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
     <persistence-unit name="Eclipselink_JPA" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <class>income.model.JobsEntity</class>
         <class>income.model.UsersEntity</class>
-        <class>income.model.JobsDetailsEntity</class>
+        <class>income.model.JobDetailsEntity</class>
         <properties>
-            <property name = "javax.persistence.jdbc.url" value = "jdbc:h2:~/income"/>
             <property name = "javax.persistence.jdbc.user" value = "user"/>
-            <property name = "javax.persistence.jdbc.password" value = "T3stP@sword"/>
+            <property name = "javax.persistence.jdbc.password" value = "test"/>
+            <property name = "javax.persistence.jdbc.url" value = "jdbc:h2:./test"/>
             <property name = "javax.persistence.jdbc.driver" value="org.h2.Driver"/>
             <property name = "eclipselink.logging.level" value = "FINE"/>
-
-            <!--<property name="eclipselink.ddl.generation.output-mode" value="both"/>-->
-            <!--<property name="eclipselink.ddl.generation" value="create-or-extend-tables"/>-->
-            <!--<property name="eclipselink.create-ddl-jdbc-file-name" value="income.h2"/>-->
         </properties>
     </persistence-unit>
 </persistence>

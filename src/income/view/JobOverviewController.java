@@ -1,8 +1,9 @@
 package income.view;
 
 import income.Main;
-import income.model.JobsDetailsEntity;
+import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
+import income.util.AlertUtil;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 import javafx.collections.ObservableList;
@@ -10,8 +11,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
@@ -28,13 +31,13 @@ public class JobOverviewController {
     private TableColumn<JobsEntity, String> nameColumn;
 
     @FXML
-    private TableView<JobsDetailsEntity> jobsDetailsTable;
+    private TableView<JobDetailsEntity> jobsDetailsTable;
     @FXML
-    private TableColumn<JobsDetailsEntity, Date> dateColumn;
+    private TableColumn<JobDetailsEntity, Date> dateColumn;
     @FXML
-    private TableColumn<JobsDetailsEntity, Double> hourColumn;
+    private TableColumn<JobDetailsEntity, Double> hourColumn;
     @FXML
-    private TableColumn<JobsDetailsEntity, Double> incomeColumn;
+    private TableColumn<JobDetailsEntity, Double> incomeColumn;
 
     @FXML
     private Label yearIncome;
@@ -46,6 +49,7 @@ public class JobOverviewController {
     private Label hoursInMonth;
 
     private Main main;
+    private Stage dialogStage;
 
     @FXML
     private void initialize() {
@@ -78,127 +82,138 @@ public class JobOverviewController {
     @FXML
     public void handleEditJob() {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        main.getJobs().remove(selectedJob);
+        int index=main.getJobs().indexOf(selectedJob);
         if (selectedJob != null) {
             boolean okClicked = main.showEditJob(selectedJob);
             if (okClicked) {
                 main.editJob(selectedJob);
-                main.getJobs().add(selectedJob);
+                main.getJobs().set(index,selectedJob);
             }
         }
     }
 
     @FXML
-    public void handleNewJobDetail(){
+    public void handleRemoveJob(){
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        JobsDetailsEntity jobDetail=new JobsDetailsEntity();
+        String tittle="usuwanie";
+        String header="usunięcie pracy"+selectedJob.getName();
+        String information="Na pewno chcesz usunąć prace: "+selectedJob.getName()+"?";
+        if(AlertUtil.confirmDialog(tittle,header,information,dialogStage)){
+            main.removeJob(selectedJob);
+            main.getJobs().remove(selectedJob);
+        }
+    }
+
+    @FXML
+    public void handleNewJobDetail() {
+        JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
+        JobDetailsEntity jobDetail = new JobDetailsEntity();
         if (selectedJob != null) {
-            boolean okClicked = main.showEditJobDetails(selectedJob,jobDetail);
+            boolean okClicked = main.showEditJobDetails(selectedJob, jobDetail);
             if (okClicked) {
                 main.insertJobDetail(jobDetail);
                 setJobDetail(selectedJob);
             }
         }
     }
+
+    @FXML
+    public void handleEditJobDetail() {
+    JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
+        JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
+        int index=main.getJobsDetails().indexOf(selectedJobDetails);
+        if (selectedJobDetails != null) {
+        boolean okClicked = main.showEditJobDetails(selectedJob,selectedJobDetails);
+        if (okClicked) {
+            main.editJobsDetails(selectedJobDetails);
+            main.getJobsDetails().set(index,selectedJobDetails);
+        }
+    }
+}
+
+
     public void setMain(Main main) {
         this.main = main;
         jobsTable.setItems(main.getJobs());
+    }
+    public void setDialogStage(Stage stage){
+        this.dialogStage=stage;
     }
 
     private void setJobDetail(JobsEntity job) {
         main.clearJobsDetails();
         if (job != null) {
             main.addJobsDetails(job);
-            SummaryIncome summaryIncome = new SummaryIncome(job);
+            Summary summary = new Summary(job);
             setJobsDetailsTable(main.getJobsDetails());
-            setWorkHourColumn();
-            setDateColumn();
-            setIncomeColumn();
-            summaryIncome.setYearIncome();
-            summaryIncome.setHourInYear();
-            summaryIncome.setMonthIncome();
-            summaryIncome.setMonthHours();
+            setJobDetailsColumns();
+            yearIncome.setText(summary.getYearIncome());
+            hoursInYear.setText(summary.getHourInYear());
+            monthIncome.setText(summary.getMonthIncome());
+            hoursInMonth.setText(summary.getMonthHours());
         }
     }
 
-    private void setJobsDetailsTable(ObservableList<JobsDetailsEntity> job) {
-        jobsDetailsTable.setItems(job);
+    private void setJobsDetailsTable(ObservableList<JobDetailsEntity> jobDetails) {
+        jobsDetailsTable.setItems(jobDetails);
     }
 
-    private void setDateColumn() {
+    private void setJobDetailsColumns() {
         dateColumn.setCellValueFactory(cellData
                 -> new ReadOnlyObjectWrapper<>(cellData.getValue().getWokrDate()));
-    }
-
-    private void setIncomeColumn() {
         incomeColumn.setCellValueFactory(cellData
                 -> new ReadOnlyObjectWrapper<>(cellData.getValue().getIncome().doubleValue()));
-    }
-
-    private void setWorkHourColumn() {
         hourColumn.setCellValueFactory(cellData
                 -> new ReadOnlyObjectWrapper<>(cellData.getValue().getHours()));
     }
 
+    private class Summary {
+        private int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        private int year = Calendar.getInstance().get(Calendar.YEAR);
+        private List<JobDetailsEntity> jobsByMonth;
+        private List<JobDetailsEntity> jobsByYear;
 
-    private class SummaryIncome {
-        private JobsEntity job;
-
-        SummaryIncome(JobsEntity job) {
-            this.job = job;
+        Summary(JobsEntity job) {
+            jobsByMonth = main.findJobsByMonth(job, month);
+            jobsByYear = main.findJobsByYear(job, year);
         }
 
-        private void setMonthHours() {
-            hoursInMonth.setText(currentMonthHours(main.findJobsByMonth
-                    (job, Calendar.getInstance().get(Calendar.MONTH) + 1)));
+        private String getMonthHours() {
+            return hourSum(jobsByMonth);
         }
 
-        private void setMonthIncome() {
-            monthIncome.setText(currentMonthIncome(main.findJobsByMonth
-                    (job, Calendar.getInstance().get(Calendar.MONTH) + 1)));
+        private String getMonthIncome() {
+            return incomeSum(jobsByMonth);
         }
 
-        private void setHourInYear() {
-            hoursInYear.setText(currentYearHours(main.findJobsByYear
-                    (job, Calendar.getInstance().get(Calendar.YEAR))));
+        private String getHourInYear() {
+            return hourSum(jobsByYear);
         }
 
-        private void setYearIncome() {
-            yearIncome.setText(currentYearIncome(main.findJobsByYear
-                    (job, Calendar.getInstance().get(Calendar.YEAR))));
+        private String getYearIncome() {
+            return incomeSum(jobsByYear);
         }
 
-        private String currentYearIncome(List<JobsDetailsEntity> jobDetail) {
+        private String incomeSum(List<JobDetailsEntity> jobDetail) {
             BigDecimal income = new BigDecimal(0);
-            for (JobsDetailsEntity temp : jobDetail) {
-                income = income.add(temp.getIncome().multiply(new BigDecimal(temp.getHours())));
+            BigDecimal hours;
+            BigDecimal multiplyResult;
+            for (JobDetailsEntity temp : jobDetail) {
+                hours = new BigDecimal(temp.getHours());
+                multiplyResult = temp.getIncome().multiply(hours).setScale(2, RoundingMode.HALF_DOWN);
+                income = income.add(multiplyResult);
             }
             return income.toString() + " zł";
         }
 
-        private String currentYearHours(List<JobsDetailsEntity> jobDetail) {
+        private String hourSum(List<JobDetailsEntity> jobDetail) {
             double hours = 0.0;
-            for (JobsDetailsEntity temp : jobDetail) {
+            for (JobDetailsEntity temp : jobDetail) {
                 hours += temp.getHours();
             }
             return Double.toString(hours) + " h";
         }
 
-        private String currentMonthIncome(List<JobsDetailsEntity> jobDetail) {
-            BigDecimal income = new BigDecimal(0);
-            for (JobsDetailsEntity temp : jobDetail) {
-                income = income.add(temp.getIncome().multiply(new BigDecimal(temp.getHours())));
-            }
-            return income.toString() + " zł";
-        }
-
-        private String currentMonthHours(List<JobsDetailsEntity> jobDetail) {
-            double hours = 0.0;
-            for (JobsDetailsEntity temp : jobDetail) {
-                hours += temp.getHours();
-            }
-            return Double.toString(hours) + " h";
-        }
 
     }
 

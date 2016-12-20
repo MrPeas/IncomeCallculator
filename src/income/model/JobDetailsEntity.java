@@ -25,7 +25,7 @@ public class JobDetailsEntity {
     private JobsEntity jobsByIdJob;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public long getId() {
         return id;

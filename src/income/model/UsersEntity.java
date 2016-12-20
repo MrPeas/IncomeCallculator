@@ -7,6 +7,9 @@ import java.util.Collection;
  * Created by Janusz on 01.11.2016.
  */
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "UserEntity.findByUsername", query = "SELECT e FROM UsersEntity e WHERE e.login=:login")
+})
 @Table(name = "USERS", schema = "PUBLIC", catalog = "TEST")
 public class UsersEntity {
     private long id;

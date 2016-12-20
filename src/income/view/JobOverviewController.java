@@ -130,7 +130,19 @@ public class JobOverviewController {
         }
     }
 }
-
+@FXML
+public void handleRemoveJobDetail(){
+    JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
+    JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
+    String tittle="usuwanie";
+    String header="usunięcie szczegółów pracy: "+selectedJob.getName();
+    String information="Na pewno chcesz usunąć prace: "+selectedJobDetails.getWokrDate()+
+            " "+selectedJobDetails.getIncome()+"?";
+    if(AlertUtil.confirmDialog(tittle,header,information,dialogStage)){
+        main.removeJobDetails(selectedJobDetails);
+        main.getJobsDetails().remove(selectedJobDetails);
+    }
+}
 
     public void setMain(Main main) {
         this.main = main;

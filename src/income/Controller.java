@@ -3,8 +3,10 @@ package income;
 
 import income.DAO.DAOJobDetailsImpl;
 import income.DAO.DAOJobsImpl;
+import income.DAO.DAOUsersImpl;
 import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
+import income.model.UsersEntity;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -13,6 +15,7 @@ public class Controller {
 private Main main;
     private DAOJobsImpl jobs=new DAOJobsImpl();
     private DAOJobDetailsImpl jobsDetails=new DAOJobDetailsImpl();
+    private DAOUsersImpl users=new DAOUsersImpl();
 
     public Controller(Main main){
         this.main=main;
@@ -38,12 +41,15 @@ private Main main;
     public void editJob(JobsEntity job){
         jobs.update(job);
     }
+    public void removeJob(Long id){jobs.remove(id);}
     public void insertJobDetail(JobDetailsEntity jobDetails){
         jobsDetails.add(jobDetails);
     }
     public void editJobDetails(JobDetailsEntity jobDetails){
         jobsDetails.update(jobDetails);
     }
-    public void removeJob(Long id){jobsDetails.remove(id);}
-
+    public void removeJobDetail(Long id){jobsDetails.remove(id);}
+    public UsersEntity getUserByName(String username){
+        return users.findByUsername(username);
+    }
 }

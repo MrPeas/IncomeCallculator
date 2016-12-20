@@ -2,9 +2,11 @@ package income;
 
 import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
+import income.model.UsersEntity;
 import income.view.EditJobController;
 import income.view.EditJobDetailController;
 import income.view.JobOverviewController;
+import income.view.LoginDialogController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,9 +43,12 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Income");
-        initMenuBar();
-        showJobOverview();
-
+        boolean logging;
+        logging = loginDialog();
+        if (logging) {
+            initMenuBar();
+            showJobOverview();
+        }
     }
 
     private void initMenuBar() throws IOException {
@@ -122,6 +127,29 @@ public class Main extends Application {
         }
     }
 
+    public boolean loginDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(Main.class.getResource("view/LoginDialog.fxml"));
+            AnchorPane dialog = loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("logowanie");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(dialog);
+            dialogStage.setScene(scene);
+
+            LoginDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setMain(this);
+            dialogStage.showAndWait();
+            return controller.loginStatus();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public ObservableList<JobsEntity> getJobs() {
         return jobs;
     }
@@ -162,11 +190,19 @@ public class Main extends Application {
         controller.insertJobDetail(jobDetail);
     }
 
-    public void editJobsDetails(JobDetailsEntity jobDetail){
+    public void editJobsDetails(JobDetailsEntity jobDetail) {
         controller.editJobDetails(jobDetail);
     }
 
-    public void removeJob(JobsEntity job){
+    public void removeJob(JobsEntity job) {
         controller.removeJob(job.getId());
+    }
+
+    public void removeJobDetails(JobDetailsEntity jobDetail) {
+        controller.removeJobDetail(jobDetail.getId());
+    }
+
+    public UsersEntity findUserByUsername(String username){
+        return controller.getUserByName(username);
     }
 }

@@ -88,8 +88,11 @@ public class EditJobDetailController {
     public void setJobDetail(JobDetailsEntity jobDetail) {
         this.jobDetail = jobDetail;
         if(jobDetail!=null){
+            if(jobDetail.getHours()!=null)
             amountOfHours.setText(jobDetail.getHours().toString());
+            if(jobDetail.getIncome()!=null)
             hourlyWage.setText(jobDetail.getIncome().toString());
+            if(jobDetail.getWokrDate()!=null)
             date.setValue(jobDetail.getWokrDate().toLocalDate());
         }
     }

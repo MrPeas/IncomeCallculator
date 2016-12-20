@@ -7,13 +7,15 @@ import java.util.Collection;
  * Created by Janusz on 01.11.2016.
  */
 @Entity
-@Table(name = "USERS", schema = "PUBLIC", catalog = "INCOME")
+@NamedQueries({
+        @NamedQuery(name = "UserEntity.findByUsername", query = "SELECT e FROM UsersEntity e WHERE e.login=:login")
+})
+@Table(name = "USERS", schema = "PUBLIC", catalog = "TEST")
 public class UsersEntity {
     private long id;
     private String login;
     private String password;
     private Collection<JobsEntity> jobsesById;
-    private Collection<UsersJobsConnectEntity> usersJobsConnectsById;
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -67,21 +69,4 @@ public class UsersEntity {
         return result;
     }
 
-    @OneToMany(mappedBy = "usersByIdUser")
-    public Collection<JobsEntity> getJobsesById() {
-        return jobsesById;
-    }
-
-    public void setJobsesById(Collection<JobsEntity> jobsesById) {
-        this.jobsesById = jobsesById;
-    }
-
-    @OneToMany(mappedBy = "usersByIdUser")
-    public Collection<UsersJobsConnectEntity> getUsersJobsConnectsById() {
-        return usersJobsConnectsById;
-    }
-
-    public void setUsersJobsConnectsById(Collection<UsersJobsConnectEntity> usersJobsConnectsById) {
-        this.usersJobsConnectsById = usersJobsConnectsById;
-    }
 }

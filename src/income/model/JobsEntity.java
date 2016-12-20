@@ -8,18 +8,22 @@ import java.util.Collection;
  * Created by Janusz on 01.11.2016.
  */
 @Entity
-@Table(name = "JOBS", schema = "PUBLIC", catalog = "INCOME")
+@NamedQueries({
+        @NamedQuery(name = "JobsEntity.findAll", query = "SELECT e FROM JobsEntity e"),
+        @NamedQuery(name = "JobsEntity.findByUserId", query = "SELECT e FROM JobsEntity e WHERE e.idUser=:id")
+})
+@Table(name = "JOBS", schema = "PUBLIC", catalog = "TEST")
 public class JobsEntity {
     private long id;
     private String name;
     private String describe;
     private BigDecimal deafultIncome;
     private long idUser;
-    private UsersEntity usersByIdUser;
-    private Collection<JobsDetailsEntity> jobsDetailsesById;
-    private Collection<UsersJobsConnectEntity> usersJobsConnectsById;
+    private Collection<JobDetailsEntity> jobsDetailsesById;
+    private BigDecimal deafultincome;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public long getId() {
         return id;
@@ -49,16 +53,6 @@ public class JobsEntity {
         this.describe = describe;
     }
 
-    @Basic
-    @Column(name = "DEAFULT_INCOME", nullable = true, precision = 2)
-    public BigDecimal getDeafultIncome() {
-        return deafultIncome;
-    }
-
-    public void setDeafultIncome(BigDecimal deafultIncome) {
-        this.deafultIncome = deafultIncome;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,7 +79,7 @@ public class JobsEntity {
     }
 
     @Basic
-    @Column(name = "ID_USER", nullable = false)
+    @Column(name = "IDUSER", nullable = false)
     public long getIdUser() {
         return idUser;
     }
@@ -94,31 +88,22 @@ public class JobsEntity {
         this.idUser = idUser;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "ID_USER", referencedColumnName = "ID", nullable = false)
-    public UsersEntity getUsersByIdUser() {
-        return usersByIdUser;
-    }
-
-    public void setUsersByIdUser(UsersEntity usersByIdUser) {
-        this.usersByIdUser = usersByIdUser;
-    }
-
     @OneToMany(mappedBy = "jobsByIdJob")
-    public Collection<JobsDetailsEntity> getJobsDetailsesById() {
+    public Collection<JobDetailsEntity> getJobsDetailsesById() {
         return jobsDetailsesById;
     }
 
-    public void setJobsDetailsesById(Collection<JobsDetailsEntity> jobsDetailsesById) {
+    public void setJobsDetailsesById(Collection<JobDetailsEntity> jobsDetailsesById) {
         this.jobsDetailsesById = jobsDetailsesById;
     }
 
-    @OneToMany(mappedBy = "jobsByIdJob")
-    public Collection<UsersJobsConnectEntity> getUsersJobsConnectsById() {
-        return usersJobsConnectsById;
+    @Basic
+    @Column(name = "DEAFULTINCOME", nullable = true, precision = 2)
+    public BigDecimal getDeafultincome() {
+        return deafultincome;
     }
 
-    public void setUsersJobsConnectsById(Collection<UsersJobsConnectEntity> usersJobsConnectsById) {
-        this.usersJobsConnectsById = usersJobsConnectsById;
+    public void setDeafultincome(BigDecimal deafultincome) {
+        this.deafultincome = deafultincome;
     }
 }

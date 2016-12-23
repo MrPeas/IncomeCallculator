@@ -1,5 +1,6 @@
 package income.view;
 
+import income.DAO.*;
 import income.Main;
 import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
@@ -50,9 +51,12 @@ public class JobOverviewController {
 
     private Main main;
     private Stage dialogStage;
+    private DAOJobs daoJobs = new DAOJobsImpl();
+    private DAOJobDetails daoJobDetails = new DAOJobDetailsImpl();
+    private DAOUsers daoUsers = new DAOUsersImpl();
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         nameColumn.setCellValueFactory(cellData -> {
             try {
                 return JavaBeanStringPropertyBuilder.create()
@@ -69,95 +73,97 @@ public class JobOverviewController {
     }
 
     @FXML
-    public void handleNewJob() {
+    private void handleNewJob() {
         JobsEntity job = new JobsEntity();
         boolean okClicked = main.showEditJob(job);
         if (okClicked) {
-            job.setIdUser(main.getUserID());
-            main.insertJob(job);
-            main.getJobs().add(job);
+            job.setIdUser(daoUsers.getUserId());
+            daoJobs.add(job);
+            daoJobs.addJobToList(job);
         }
     }
 
     @FXML
-    public void handleEditJob() {
+    private void handleEditJob() {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        int index=main.getJobs().indexOf(selectedJob);
+        int index = daoJobs.jobIndex(selectedJob);
         if (selectedJob != null) {
             boolean okClicked = main.showEditJob(selectedJob);
             if (okClicked) {
-                main.editJob(selectedJob);
-                main.getJobs().set(index,selectedJob);
+                daoJobs.update(selectedJob);
+                daoJobs.updateJobInList(selectedJob, index);
             }
         }
     }
 
     @FXML
-    public void handleRemoveJob(){
+    private void handleRemoveJob() {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        String tittle="usuwanie";
-        String header="usunięcie pracy"+selectedJob.getName();
-        String information="Na pewno chcesz usunąć prace: "+selectedJob.getName()+"?";
-        if(AlertUtil.confirmDialog(tittle,header,information,dialogStage)){
-            main.removeJob(selectedJob);
-            main.getJobs().remove(selectedJob);
+        AlertUtil alert = new AlertUtil();
+        String tittle = "usuwanie";
+        String header = "usunięcie pracy" + selectedJob.getName();
+        String information = "Na pewno chcesz usunąć prace: " + selectedJob.getName() + "?";
+        if (alert.confirmDialog(tittle, header, information, dialogStage)) {
+            daoJobs.remove(selectedJob.getId());
+            daoJobs.removeJobFromList(selectedJob);
         }
     }
 
     @FXML
-    public void handleNewJobDetail() {
+    private void handleNewJobDetail() {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
         JobDetailsEntity jobDetail = new JobDetailsEntity();
         if (selectedJob != null) {
             boolean okClicked = main.showEditJobDetails(selectedJob, jobDetail);
             if (okClicked) {
-                main.insertJobDetail(jobDetail);
-                setJobDetail(selectedJob);
+                daoJobDetails.add(jobDetail);
+                daoJobDetails.addJobDetailToList(jobDetail);
             }
         }
     }
 
     @FXML
-    public void handleEditJobDetail() {
-    JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
+    private void handleEditJobDetail() {
+        JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        int index=main.getJobsDetails().indexOf(selectedJobDetails);
+        int index = daoJobDetails.getJobDetails().indexOf(selectedJobDetails);
         if (selectedJobDetails != null) {
-        boolean okClicked = main.showEditJobDetails(selectedJob,selectedJobDetails);
-        if (okClicked) {
-            main.editJobsDetails(selectedJobDetails);
-            main.getJobsDetails().set(index,selectedJobDetails);
+            boolean okClicked = main.showEditJobDetails(selectedJob, selectedJobDetails);
+            if (okClicked) {
+                daoJobDetails.update(selectedJobDetails);
+                daoJobDetails.updateListJobDetail(selectedJobDetails, index);
+            }
         }
     }
-}
-@FXML
-public void handleRemoveJobDetail(){
-    JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
-    JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-    String tittle="usuwanie";
-    String header="usunięcie szczegółów pracy: "+selectedJob.getName();
-    String information="Na pewno chcesz usunąć prace: "+selectedJobDetails.getWokrDate()+
-            " "+selectedJobDetails.getIncome()+"?";
-    if(AlertUtil.confirmDialog(tittle,header,information,dialogStage)){
-        main.removeJobDetails(selectedJobDetails);
-        main.getJobsDetails().remove(selectedJobDetails);
-    }
-}
 
-    public void setMain(Main main) {
-        this.main = main;
-        jobsTable.setItems(main.getJobs());
+    @FXML
+    private void handleRemoveJobDetail() {
+        JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
+        JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
+        AlertUtil alert = new AlertUtil();
+        String tittle = "usuwanie";
+        String header = "usunięcie szczegółów pracy: " + selectedJob.getName();
+        String information = "Na pewno chcesz usunąć prace: " + selectedJobDetails.getWokrDate() +
+                " " + selectedJobDetails.getIncome() + "?";
+        if (alert.confirmDialog(tittle, header, information, dialogStage)) {
+            daoJobDetails.remove(selectedJobDetails.getId());
+            daoJobDetails.removeJobsDetail(selectedJobDetails);
+        }
     }
-    public void setDialogStage(Stage stage){
-        this.dialogStage=stage;
+
+    public void setMain(Main main, long id) {
+        this.main = main;
+        jobsTable.setItems(daoJobs.findByIdUser(id));
+    }
+
+    public void setDialogStage(Stage stage) {
+        this.dialogStage = stage;
     }
 
     private void setJobDetail(JobsEntity job) {
-        main.clearJobsDetails();
         if (job != null) {
-            main.addJobsDetails(job);
             Summary summary = new Summary(job);
-            setJobsDetailsTable(main.getJobsDetails());
+            setJobsDetailsTable(daoJobDetails.findByIdJob(job.getId()));
             setJobDetailsColumns();
             yearIncome.setText(summary.getYearIncome());
             hoursInYear.setText(summary.getHourInYear());
@@ -186,8 +192,8 @@ public void handleRemoveJobDetail(){
         private List<JobDetailsEntity> jobsByYear;
 
         Summary(JobsEntity job) {
-            jobsByMonth = main.findJobsByMonth(job, month);
-            jobsByYear = main.findJobsByYear(job, year);
+            jobsByMonth = daoJobDetails.findJobsDetailsByMonth(job.getId(), month);
+            jobsByYear = daoJobDetails.findJobsDetailsByYear(job.getId(), year);
         }
 
         private String getMonthHours() {

@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class DAOUsersImpl extends DAOAbstract<UsersEntity> implements DAOUsers {
     private EntityManager em;
+    private long userId;
     @Override
     public List<UsersEntity> findAll() {
         return null;
@@ -26,11 +27,16 @@ public class DAOUsersImpl extends DAOAbstract<UsersEntity> implements DAOUsers {
             query.setParameter("login", username);
             UsersEntity user = (UsersEntity) query.getSingleResult();
             em.close();
+            userId=user.getId();
             return user;
         }catch (NoResultException e){
             em.close();
             return null;
         }
+    }
 
+    @Override
+    public long getUserId() {
+        return userId;
     }
 }

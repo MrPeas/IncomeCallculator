@@ -10,7 +10,7 @@ import java.util.Optional;
  * Created by Janusz on 05.12.2016.
  */
 public class AlertUtil {
-    public static boolean isValid(String title, String header, String errorMessage, Stage dialogStage) {
+    public boolean isValid(String title, String header, String errorMessage, Stage dialogStage) {
         if (errorMessage.length() == 0) {
             return true;
         } else {
@@ -22,7 +22,7 @@ public class AlertUtil {
         }
     }
 
-    public static boolean confirmDialog(String title, String header, String information, Stage dialogStage) {
+    public boolean confirmDialog(String title, String header, String information, Stage dialogStage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initOwner(dialogStage);
         alert = setAlertText(title, header, information, alert);
@@ -35,7 +35,7 @@ public class AlertUtil {
 
     }
 
-    private static Alert setAlertText(String title, String header,
+    private Alert setAlertText(String title, String header,
                                       String text, Alert alert) {
         alert.setTitle(title);
         alert.setHeaderText(header);

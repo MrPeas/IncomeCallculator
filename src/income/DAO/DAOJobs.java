@@ -1,12 +1,15 @@
 package income.DAO;
 
 import income.model.JobsEntity;
-
-import java.util.List;
+import javafx.collections.ObservableList;
 
 /**
  * Created by Janusz on 09.12.2016.
  */
 public interface DAOJobs extends DAO<JobsEntity> {
-public List<JobsEntity> findByIdUser(Long userId);
+    ObservableList<JobsEntity> findByIdUser(Long userId);
+    void addJobToList(JobsEntity job);
+    void removeJobFromList(JobsEntity job);
+    int jobIndex(JobsEntity job);
+    void updateJobInList(JobsEntity job,int index);
 }

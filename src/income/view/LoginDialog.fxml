@@ -47,9 +47,9 @@
                   <Insets left="25.0" right="25.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="warning" alignment="CENTER" contentDisplay="BOTTOM" ellipsisString="" text="asdasd" textAlignment="CENTER" textFill="#f80505" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+            <Label fx:id="warning" alignment="CENTER" contentDisplay="BOTTOM" ellipsisString="" textAlignment="CENTER" textFill="#f80505" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                <font>
-                  <Font size="12.0" />
+                  <Font size="48.0" />
                </font>
                <GridPane.margin>
                   <Insets bottom="10.0" />

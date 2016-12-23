@@ -1,5 +1,7 @@
 package income.view;
 
+import income.DAO.DAOUsers;
+import income.DAO.DAOUsersImpl;
 import income.Main;
 import income.model.UsersEntity;
 import javafx.fxml.FXML;
@@ -21,8 +23,9 @@ public class LoginDialogController {
     Label warning;
 
     boolean loginStatus=false;
-    Stage dialogStage;
-    Main main;
+    private Stage dialogStage;
+    private Main main;
+    private DAOUsers daoUsers=new DAOUsersImpl();
 
     public void setMain(Main main) {
         this.main = main;
@@ -33,25 +36,28 @@ public class LoginDialogController {
     }
 
     @FXML
-    public void initialize(){
-        warning.setText("złe hasło lub login");
+    private void initialize(){
     }
 
     @FXML
-    public void handleLogIn(){
+    private void handleLogIn(){
+        UsersEntity user;
         if(stringValidation(username.getText())) {
-            UsersEntity user = main.findUserByUsername(username.getText().toLowerCase());
+            user = daoUsers.findByUsername(username.getText().toLowerCase());
             if(checkUser(user)) {
                 this.loginStatus = true;
+                main.setUserId(user.getId());
+                user=null;
                 dialogStage.close();
             }
         }else {
+            user=null;
             warning.setText("login ani hasło nie mogą być puste");
         }
     }
 
     @FXML
-    public void handleRegistration(){
+    private void handleRegistration(){
         loginStatus=false;
 
     }
@@ -77,4 +83,5 @@ public class LoginDialogController {
             return false;
         }
     }
+
 }

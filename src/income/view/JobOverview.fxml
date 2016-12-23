@@ -96,7 +96,7 @@
                                             <items>
                                               <MenuItem mnemonicParsing="false" onAction="#handleNewJobDetail" text="Dodaj" />
                                               <MenuItem mnemonicParsing="false" onAction="#handleEditJobDetail" text="Edytuj" />
-                                                <MenuItem mnemonicParsing="false" text="Usuń" />
+                                                <MenuItem mnemonicParsing="false" onAction="#handleRemoveJobDetail" text="Usuń" />
                                             </items>
                                           </MenuButton>
                                                                  <Button disable="true" mnemonicParsing="false" text="Dodaj zarobki" />

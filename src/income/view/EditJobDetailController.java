@@ -24,20 +24,20 @@ public class EditJobDetailController {
     private boolean okClicked = false;
 
     @FXML
-    TextField amountOfHours;
+    private TextField amountOfHours;
     @FXML
-    TextField hourlyWage;
+    private TextField hourlyWage;
     @FXML
-    DatePicker date;
+    private DatePicker date;
 
 
     @FXML
-    public void initalize(){
+    public void initialize() {
     }
 
 
     @FXML
-    public void handleOk() {
+    private void handleOk() {
         if (isInputValid()) {
             jobDetail.setIdJob(job.getId());
             jobDetail.setHours(Double.parseDouble(amountOfHours.getText()));
@@ -57,24 +57,25 @@ public class EditJobDetailController {
         this.dialogStage = dialogStage;
     }
 
-    private boolean isInputValid(){
+    private boolean isInputValid() {
         String errorMessage = "";
         String title = "Złe dane";
         String header = "Wprowadź poprawne dane";
+        AlertUtil alert = new AlertUtil();
         try {
-            if (date == null || date.getValue().toString().length()==0) {
+            if (date == null || date.getValue().toString().length() == 0) {
                 errorMessage += "Wybierz date\n";
             }
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             errorMessage += "Wybierz date\n";
         }
         if (!ConverterUtil.isParseToBigDecimal(hourlyWage.getText())) {
-                errorMessage += "Zły format liczby, wprowadź liczbę dodatnią!(np: 10.6)\n";
+            errorMessage += "Zły format liczby, wprowadź liczbę dodatnią!(np: 10.6)\n";
         }
         if (!ConverterUtil.isParseToBigDecimal(amountOfHours.getText())) {
-                errorMessage += "Zły format liczby, wprowadź liczbę dodatnią!(np: 10.6)\n";
+            errorMessage += "Zły format liczby, wprowadź liczbę dodatnią!(np: 10.6)\n";
         }
-        return AlertUtil.isValid(title, header, errorMessage,dialogStage);
+        return alert.isValid(title, header, errorMessage, dialogStage);
     }
 
     public void setJob(JobsEntity job) {
@@ -87,13 +88,13 @@ public class EditJobDetailController {
 
     public void setJobDetail(JobDetailsEntity jobDetail) {
         this.jobDetail = jobDetail;
-        if(jobDetail!=null){
-            if(jobDetail.getHours()!=null)
-            amountOfHours.setText(jobDetail.getHours().toString());
-            if(jobDetail.getIncome()!=null)
-            hourlyWage.setText(jobDetail.getIncome().toString());
-            if(jobDetail.getWokrDate()!=null)
-            date.setValue(jobDetail.getWokrDate().toLocalDate());
+        if (jobDetail != null) {
+            if (jobDetail.getHours() != null)
+                amountOfHours.setText(jobDetail.getHours().toString());
+            if (jobDetail.getIncome() != null)
+                hourlyWage.setText(jobDetail.getIncome().toString());
+            if (jobDetail.getWokrDate() != null)
+                date.setValue(jobDetail.getWokrDate().toLocalDate());
         }
     }
 

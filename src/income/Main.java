@@ -2,11 +2,9 @@ package income;
 
 import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
-import income.view.EditJobController;
-import income.view.EditJobDetailController;
-import income.view.JobOverviewController;
-import income.view.LoginDialogController;
+import income.view.*;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,6 +20,7 @@ public class Main extends Application {
     private Stage primaryStage;
     private BorderPane barMenu;
     private long userId;
+    private String username;
 
     public static void main(String[] args) {
         launch(args);
@@ -34,16 +33,19 @@ public class Main extends Application {
         boolean logging;
         logging = loginDialog();
         if (logging) {
-            initMenuBar();
+            initMenuBar(username);
             showJobOverview(userId);
         }
+        primaryStage.setOnCloseRequest(e -> Platform.exit());
     }
 
-    private void initMenuBar() throws IOException {
+    private void initMenuBar(String username) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/UpBar.fxml"));
         Parent root = loader.load();
         barMenu = (BorderPane) root;
         primaryStage.setScene(new Scene(root, 800, 600));
+        UpBarController controller=loader.getController();
+        controller.initialize(username);
         primaryStage.show();
     }
 
@@ -61,7 +63,7 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             String resource = "view/EditJobDialog.fxml";
             String tittle = "Edycja pracy";
-            Stage dialogStage = createStage(resource, tittle, loader);
+            Stage dialogStage = createStage(resource, tittle, loader,primaryStage);
             EditJobController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setJob(job);
@@ -78,7 +80,7 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             String resource = "view/EditJobDetailDialog.fxml";
             String tittle = "Edycja szczegółów pracy";
-            Stage dialogStage = createStage(resource, tittle, loader);
+            Stage dialogStage = createStage(resource, tittle, loader,primaryStage);
             EditJobDetailController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setJob(job);
@@ -96,7 +98,7 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             String resource = "view/LoginDialog.fxml";
             String tittle = "logowanie";
-            Stage dialogStage = createStage(resource, tittle, loader);
+            Stage dialogStage = createStage(resource, tittle, loader,primaryStage);
             LoginDialogController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setMain(this);
@@ -108,17 +110,37 @@ public class Main extends Application {
         }
     }
 
+    public boolean registerDialog(Stage owner){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            String resource = "view/RegistrationDialog.fxml";
+            String tittle = "rejestracja";
+            Stage dialogStage = createStage(resource, tittle, loader,owner);
+            RegistrationDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            dialogStage.showAndWait();
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    private Stage createStage(String resource, String tittle, FXMLLoader loader) throws IOException {
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    private Stage createStage(String resource, String tittle, FXMLLoader loader, Stage owner) throws IOException {
         loader.setLocation(Main.class.getResource(resource));
         AnchorPane dialog = loader.load();
         Stage dialogStage = new Stage();
         dialogStage.setTitle(tittle);
         dialogStage.initModality(Modality.WINDOW_MODAL);
-        dialogStage.initOwner(primaryStage);
+        dialogStage.initOwner(owner);
         Scene scene = new Scene(dialog);
         dialogStage.setScene(scene);
         return dialogStage;

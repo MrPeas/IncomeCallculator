@@ -29,7 +29,6 @@ public class EditJobController {
     @FXML
     public void initialize() {
         income.setText("0");
-
     }
 
     @FXML
@@ -86,6 +85,4 @@ public class EditJobController {
         }
         return alert.isValid(title, header, errorMessage, dialogStage);
     }
-
-
 }

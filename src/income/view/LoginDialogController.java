@@ -4,6 +4,8 @@ import income.DAO.DAOUsers;
 import income.DAO.DAOUsersImpl;
 import income.Main;
 import income.model.UsersEntity;
+import income.util.AlertUtil;
+import income.util.ConverterUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -42,32 +44,35 @@ public class LoginDialogController {
     @FXML
     private void handleLogIn(){
         UsersEntity user;
-        if(stringValidation(username.getText())) {
+        if(ConverterUtil.isParseToString(username.getText())) {
             user = daoUsers.findByUsername(username.getText().toLowerCase());
             if(checkUser(user)) {
                 this.loginStatus = true;
                 main.setUserId(user.getId());
-                user=null;
+                main.setUsername(user.getLogin());
+                user.setLogin("");
+                user.setPassword("");
                 dialogStage.close();
             }
         }else {
-            user=null;
             warning.setText("login ani hasło nie mogą być puste");
         }
     }
 
     @FXML
     private void handleRegistration(){
-        loginStatus=false;
-
+        AlertUtil alert=new AlertUtil();
+        boolean success=main.registerDialog(dialogStage);
+        if(success){
+            String title="rejstracja";
+            String header="Rejetracja powiodła się";
+            String information="użytkownik został dodany";
+            alert.informationAlert(title,header,information,dialogStage);
+        }
     }
 
     public boolean loginStatus(){
         return loginStatus;
-    }
-
-    private boolean stringValidation(String value){
-        return !(value==null)&&!value.isEmpty();
     }
 
     private boolean checkUser(UsersEntity user){

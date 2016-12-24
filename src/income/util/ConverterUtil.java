@@ -23,7 +23,7 @@ public class ConverterUtil {
 
     public static boolean isParseToString(String text) {
         try {
-            if (text.length() == 0) {
+            if (text.isEmpty()) {
                 return false;
             } else {
                 return true;

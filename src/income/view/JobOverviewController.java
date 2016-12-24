@@ -1,6 +1,9 @@
 package income.view;
 
-import income.DAO.*;
+import income.DAO.DAOJobDetails;
+import income.DAO.DAOJobDetailsImpl;
+import income.DAO.DAOJobs;
+import income.DAO.DAOJobsImpl;
 import income.Main;
 import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
@@ -53,7 +56,7 @@ public class JobOverviewController {
     private Stage dialogStage;
     private DAOJobs daoJobs = new DAOJobsImpl();
     private DAOJobDetails daoJobDetails = new DAOJobDetailsImpl();
-    private DAOUsers daoUsers = new DAOUsersImpl();
+    private long userId;
 
     @FXML
     public void initialize() {
@@ -69,7 +72,6 @@ public class JobOverviewController {
         });
         jobsTable.getSelectionModel().selectedItemProperty().
                 addListener((observable, oldValue, newValue) -> setJobDetail(newValue));
-
     }
 
     @FXML
@@ -77,7 +79,7 @@ public class JobOverviewController {
         JobsEntity job = new JobsEntity();
         boolean okClicked = main.showEditJob(job);
         if (okClicked) {
-            job.setIdUser(daoUsers.getUserId());
+            job.setIdUser(userId);
             daoJobs.add(job);
             daoJobs.addJobToList(job);
         }
@@ -140,19 +142,23 @@ public class JobOverviewController {
     private void handleRemoveJobDetail() {
         JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        AlertUtil alert = new AlertUtil();
-        String tittle = "usuwanie";
-        String header = "usunięcie szczegółów pracy: " + selectedJob.getName();
-        String information = "Na pewno chcesz usunąć prace: " + selectedJobDetails.getWokrDate() +
-                " " + selectedJobDetails.getIncome() + "?";
-        if (alert.confirmDialog(tittle, header, information, dialogStage)) {
-            daoJobDetails.remove(selectedJobDetails.getId());
-            daoJobDetails.removeJobsDetail(selectedJobDetails);
+        if (selectedJobDetails != null) {
+            AlertUtil alert = new AlertUtil();
+            String tittle = "usuwanie";
+            String header = "usunięcie szczegółów pracy: " + selectedJob.getName();
+            String information = "Na pewno chcesz usunąć prace: "
+                    + selectedJobDetails.getWokrDate() +
+                    " " + selectedJobDetails.getIncome() + "?";
+            if (alert.confirmDialog(tittle, header, information, dialogStage)) {
+                daoJobDetails.remove(selectedJobDetails.getId());
+                daoJobDetails.removeJobsDetailFromList(selectedJobDetails);
+            }
         }
     }
 
     public void setMain(Main main, long id) {
         this.main = main;
+        userId = id;
         jobsTable.setItems(daoJobs.findByIdUser(id));
     }
 
@@ -162,13 +168,14 @@ public class JobOverviewController {
 
     private void setJobDetail(JobsEntity job) {
         if (job != null) {
-            Summary summary = new Summary(job);
-            setJobsDetailsTable(daoJobDetails.findByIdJob(job.getId()));
+            List<JobDetailsEntity> jobsByMonth = getJobByMonth(job);
+            List<JobDetailsEntity> jobsByYear = getJobByYear(job);
+            setJobsDetailsTable(getJobByIdJob(job.getId()));
             setJobDetailsColumns();
-            yearIncome.setText(summary.getYearIncome());
-            hoursInYear.setText(summary.getHourInYear());
-            monthIncome.setText(summary.getMonthIncome());
-            hoursInMonth.setText(summary.getMonthHours());
+            yearIncome.setText(incomeSum(jobsByYear));
+            hoursInYear.setText(hourSum(jobsByYear));
+            monthIncome.setText(incomeSum(jobsByMonth));
+            hoursInMonth.setText(hourSum(jobsByMonth));
         }
     }
 
@@ -185,54 +192,36 @@ public class JobOverviewController {
                 -> new ReadOnlyObjectWrapper<>(cellData.getValue().getHours()));
     }
 
-    private class Summary {
-        private int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
-        private int year = Calendar.getInstance().get(Calendar.YEAR);
-        private List<JobDetailsEntity> jobsByMonth;
-        private List<JobDetailsEntity> jobsByYear;
-
-        Summary(JobsEntity job) {
-            jobsByMonth = daoJobDetails.findJobsDetailsByMonth(job.getId(), month);
-            jobsByYear = daoJobDetails.findJobsDetailsByYear(job.getId(), year);
-        }
-
-        private String getMonthHours() {
-            return hourSum(jobsByMonth);
-        }
-
-        private String getMonthIncome() {
-            return incomeSum(jobsByMonth);
-        }
-
-        private String getHourInYear() {
-            return hourSum(jobsByYear);
-        }
-
-        private String getYearIncome() {
-            return incomeSum(jobsByYear);
-        }
-
-        private String incomeSum(List<JobDetailsEntity> jobDetail) {
-            BigDecimal income = new BigDecimal(0);
-            BigDecimal hours;
-            BigDecimal multiplyResult;
-            for (JobDetailsEntity temp : jobDetail) {
-                hours = new BigDecimal(temp.getHours());
-                multiplyResult = temp.getIncome().multiply(hours).setScale(2, RoundingMode.HALF_DOWN);
-                income = income.add(multiplyResult);
-            }
-            return income.toString() + " zł";
-        }
-
-        private String hourSum(List<JobDetailsEntity> jobDetail) {
-            double hours = 0.0;
-            for (JobDetailsEntity temp : jobDetail) {
-                hours += temp.getHours();
-            }
-            return Double.toString(hours) + " h";
-        }
-
-
+    private List<JobDetailsEntity> getJobByMonth(JobsEntity job) {
+        int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        return daoJobDetails.findJobsDetailsByMonth(job.getId(), month);
     }
 
+    private List<JobDetailsEntity> getJobByYear(JobsEntity job) {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        return daoJobDetails.findJobsDetailsByYear(job.getId(), year);
+    }
+
+    private ObservableList<JobDetailsEntity> getJobByIdJob(long id) {
+        return daoJobDetails.findByIdJob(id);
+    }
+
+    private String incomeSum(List<JobDetailsEntity> jobDetail) {
+        BigDecimal income = new BigDecimal(0);
+        BigDecimal hours, multiplyResult;
+        for (JobDetailsEntity temp : jobDetail) {
+            hours = new BigDecimal(temp.getHours());
+            multiplyResult = temp.getIncome().multiply(hours).setScale(2, RoundingMode.HALF_DOWN);
+            income = income.add(multiplyResult);
+        }
+        return income.toString() + " zł";
+    }
+
+    private String hourSum(List<JobDetailsEntity> jobDetail) {
+        double hours = 0.0;
+        for (JobDetailsEntity temp : jobDetail) {
+            hours += temp.getHours();
+        }
+        return Double.toString(hours) + " h";
+    }
 }

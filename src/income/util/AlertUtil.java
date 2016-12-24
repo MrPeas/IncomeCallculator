@@ -34,7 +34,18 @@ public class AlertUtil {
         }
 
     }
-
+    public void informationAlert(String title,String header,String information,Stage dialogStage){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initOwner(dialogStage);
+        alert = setAlertText(title, header, information, alert);
+        alert.showAndWait();
+    }
+    public void errorAlert(String title,String header,String information,Stage dialogStage){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initOwner(dialogStage);
+        alert = setAlertText(title, header, information, alert);
+        alert.showAndWait();
+    }
     private Alert setAlertText(String title, String header,
                                       String text, Alert alert) {
         alert.setTitle(title);

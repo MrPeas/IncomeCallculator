@@ -7,5 +7,4 @@ import income.model.UsersEntity;
  */
 public interface DAOUsers extends DAO<UsersEntity> {
     UsersEntity findByUsername(String username);
-    long getUserId();
 }

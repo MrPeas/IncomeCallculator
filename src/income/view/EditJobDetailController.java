@@ -1,5 +1,7 @@
 package income.view;
 
+import income.DAO.DAOJobDetails;
+import income.DAO.DAOJobDetailsImpl;
 import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
 import income.util.AlertUtil;
@@ -21,7 +23,9 @@ public class EditJobDetailController {
     private Stage dialogStage;
     private JobDetailsEntity jobDetail;
     private JobsEntity job;
+    private DAOJobDetails daoJobDetails=new DAOJobDetailsImpl();
     private boolean okClicked = false;
+    private boolean edit=false;
 
     @FXML
     private TextField amountOfHours;
@@ -65,6 +69,10 @@ public class EditJobDetailController {
         try {
             if (date == null || date.getValue().toString().length() == 0) {
                 errorMessage += "Wybierz date\n";
+            }else{
+                if(daoJobDetails.isExistJobDetail(job.getId(),Date.valueOf(date.getValue()))&&!edit){
+                    errorMessage += "Data już istnieje w bazie\n";
+                }
             }
         } catch (NullPointerException e) {
             errorMessage += "Wybierz date\n";
@@ -80,6 +88,7 @@ public class EditJobDetailController {
 
     public void setJob(JobsEntity job) {
         this.job = job;
+        hourlyWage.setText(job.getDeafultincome().toString());
     }
 
     public boolean isOkClicked() {
@@ -89,12 +98,16 @@ public class EditJobDetailController {
     public void setJobDetail(JobDetailsEntity jobDetail) {
         this.jobDetail = jobDetail;
         if (jobDetail != null) {
-            if (jobDetail.getHours() != null)
+            if (jobDetail.getHours() != null) {
                 amountOfHours.setText(jobDetail.getHours().toString());
-            if (jobDetail.getIncome() != null)
+            }
+            if (jobDetail.getIncome() != null) {
                 hourlyWage.setText(jobDetail.getIncome().toString());
-            if (jobDetail.getWokrDate() != null)
+            }
+            if (jobDetail.getWokrDate() != null) {
                 date.setValue(jobDetail.getWokrDate().toLocalDate());
+                edit=true;
+            }
         }
     }
 

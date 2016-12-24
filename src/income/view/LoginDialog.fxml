@@ -49,7 +49,7 @@
             </Label>
             <Label fx:id="warning" alignment="CENTER" contentDisplay="BOTTOM" ellipsisString="" textAlignment="CENTER" textFill="#f80505" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                <font>
-                  <Font size="48.0" />
+                  <Font size="24.0" />
                </font>
                <GridPane.margin>
                   <Insets bottom="10.0" />

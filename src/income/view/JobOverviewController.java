@@ -1,5 +1,9 @@
 package income.view;
 
+import income.DAO.DAOJobDetails;
+import income.DAO.DAOJobDetailsImpl;
+import income.DAO.DAOJobs;
+import income.DAO.DAOJobsImpl;
 import income.Main;
 import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
@@ -50,9 +54,12 @@ public class JobOverviewController {
 
     private Main main;
     private Stage dialogStage;
+    private DAOJobs daoJobs = new DAOJobsImpl();
+    private DAOJobDetails daoJobDetails = new DAOJobDetailsImpl();
+    private long userId;
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         nameColumn.setCellValueFactory(cellData -> {
             try {
                 return JavaBeanStringPropertyBuilder.create()
@@ -65,104 +72,110 @@ public class JobOverviewController {
         });
         jobsTable.getSelectionModel().selectedItemProperty().
                 addListener((observable, oldValue, newValue) -> setJobDetail(newValue));
-
     }
 
     @FXML
-    public void handleNewJob() {
+    private void handleNewJob() {
         JobsEntity job = new JobsEntity();
         boolean okClicked = main.showEditJob(job);
         if (okClicked) {
-            job.setIdUser(main.getUserID());
-            main.insertJob(job);
-            main.getJobs().add(job);
+            job.setIdUser(userId);
+            daoJobs.add(job);
+            daoJobs.addJobToList(job);
         }
     }
 
     @FXML
-    public void handleEditJob() {
+    private void handleEditJob() {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        int index=main.getJobs().indexOf(selectedJob);
+        int index = daoJobs.jobIndex(selectedJob);
         if (selectedJob != null) {
             boolean okClicked = main.showEditJob(selectedJob);
             if (okClicked) {
-                main.editJob(selectedJob);
-                main.getJobs().set(index,selectedJob);
+                daoJobs.update(selectedJob);
+                daoJobs.updateJobInList(selectedJob, index);
             }
         }
     }
 
     @FXML
-    public void handleRemoveJob(){
+    private void handleRemoveJob() {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        String tittle="usuwanie";
-        String header="usunięcie pracy"+selectedJob.getName();
-        String information="Na pewno chcesz usunąć prace: "+selectedJob.getName()+"?";
-        if(AlertUtil.confirmDialog(tittle,header,information,dialogStage)){
-            main.removeJob(selectedJob);
-            main.getJobs().remove(selectedJob);
+        AlertUtil alert = new AlertUtil();
+        String tittle = "usuwanie";
+        String header = "usunięcie pracy" + selectedJob.getName();
+        String information = "Na pewno chcesz usunąć prace: " + selectedJob.getName() + "?";
+        if (alert.confirmDialog(tittle, header, information, dialogStage)) {
+            daoJobs.remove(selectedJob.getId());
+            daoJobs.removeJobFromList(selectedJob);
         }
     }
 
     @FXML
-    public void handleNewJobDetail() {
+    private void handleNewJobDetail() {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
         JobDetailsEntity jobDetail = new JobDetailsEntity();
         if (selectedJob != null) {
             boolean okClicked = main.showEditJobDetails(selectedJob, jobDetail);
             if (okClicked) {
-                main.insertJobDetail(jobDetail);
-                setJobDetail(selectedJob);
+                daoJobDetails.add(jobDetail);
+                daoJobDetails.addJobDetailToList(jobDetail);
             }
         }
     }
 
     @FXML
-    public void handleEditJobDetail() {
-    JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
+    private void handleEditJobDetail() {
+        JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        int index=main.getJobsDetails().indexOf(selectedJobDetails);
+        int index = daoJobDetails.getJobDetails().indexOf(selectedJobDetails);
         if (selectedJobDetails != null) {
-        boolean okClicked = main.showEditJobDetails(selectedJob,selectedJobDetails);
-        if (okClicked) {
-            main.editJobsDetails(selectedJobDetails);
-            main.getJobsDetails().set(index,selectedJobDetails);
+            boolean okClicked = main.showEditJobDetails(selectedJob, selectedJobDetails);
+            if (okClicked) {
+                daoJobDetails.update(selectedJobDetails);
+                daoJobDetails.updateListJobDetail(selectedJobDetails, index);
+            }
         }
     }
-}
-@FXML
-public void handleRemoveJobDetail(){
-    JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
-    JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-    String tittle="usuwanie";
-    String header="usunięcie szczegółów pracy: "+selectedJob.getName();
-    String information="Na pewno chcesz usunąć prace: "+selectedJobDetails.getWokrDate()+
-            " "+selectedJobDetails.getIncome()+"?";
-    if(AlertUtil.confirmDialog(tittle,header,information,dialogStage)){
-        main.removeJobDetails(selectedJobDetails);
-        main.getJobsDetails().remove(selectedJobDetails);
-    }
-}
 
-    public void setMain(Main main) {
-        this.main = main;
-        jobsTable.setItems(main.getJobs());
+    @FXML
+    private void handleRemoveJobDetail() {
+        JobDetailsEntity selectedJobDetails = jobsDetailsTable.getSelectionModel().getSelectedItem();
+        JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
+        if (selectedJobDetails != null) {
+            AlertUtil alert = new AlertUtil();
+            String tittle = "usuwanie";
+            String header = "usunięcie szczegółów pracy: " + selectedJob.getName();
+            String information = "Na pewno chcesz usunąć prace: "
+                    + selectedJobDetails.getWokrDate() +
+                    " " + selectedJobDetails.getIncome() + "?";
+            if (alert.confirmDialog(tittle, header, information, dialogStage)) {
+                daoJobDetails.remove(selectedJobDetails.getId());
+                daoJobDetails.removeJobsDetailFromList(selectedJobDetails);
+            }
+        }
     }
-    public void setDialogStage(Stage stage){
-        this.dialogStage=stage;
+
+    public void setMain(Main main, long id) {
+        this.main = main;
+        userId = id;
+        jobsTable.setItems(daoJobs.findByIdUser(id));
+    }
+
+    public void setDialogStage(Stage stage) {
+        this.dialogStage = stage;
     }
 
     private void setJobDetail(JobsEntity job) {
-        main.clearJobsDetails();
         if (job != null) {
-            main.addJobsDetails(job);
-            Summary summary = new Summary(job);
-            setJobsDetailsTable(main.getJobsDetails());
+            List<JobDetailsEntity> jobsByMonth = getJobByMonth(job);
+            List<JobDetailsEntity> jobsByYear = getJobByYear(job);
+            setJobsDetailsTable(getJobByIdJob(job.getId()));
             setJobDetailsColumns();
-            yearIncome.setText(summary.getYearIncome());
-            hoursInYear.setText(summary.getHourInYear());
-            monthIncome.setText(summary.getMonthIncome());
-            hoursInMonth.setText(summary.getMonthHours());
+            yearIncome.setText(incomeSum(jobsByYear));
+            hoursInYear.setText(hourSum(jobsByYear));
+            monthIncome.setText(incomeSum(jobsByMonth));
+            hoursInMonth.setText(hourSum(jobsByMonth));
         }
     }
 
@@ -179,54 +192,36 @@ public void handleRemoveJobDetail(){
                 -> new ReadOnlyObjectWrapper<>(cellData.getValue().getHours()));
     }
 
-    private class Summary {
-        private int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
-        private int year = Calendar.getInstance().get(Calendar.YEAR);
-        private List<JobDetailsEntity> jobsByMonth;
-        private List<JobDetailsEntity> jobsByYear;
-
-        Summary(JobsEntity job) {
-            jobsByMonth = main.findJobsByMonth(job, month);
-            jobsByYear = main.findJobsByYear(job, year);
-        }
-
-        private String getMonthHours() {
-            return hourSum(jobsByMonth);
-        }
-
-        private String getMonthIncome() {
-            return incomeSum(jobsByMonth);
-        }
-
-        private String getHourInYear() {
-            return hourSum(jobsByYear);
-        }
-
-        private String getYearIncome() {
-            return incomeSum(jobsByYear);
-        }
-
-        private String incomeSum(List<JobDetailsEntity> jobDetail) {
-            BigDecimal income = new BigDecimal(0);
-            BigDecimal hours;
-            BigDecimal multiplyResult;
-            for (JobDetailsEntity temp : jobDetail) {
-                hours = new BigDecimal(temp.getHours());
-                multiplyResult = temp.getIncome().multiply(hours).setScale(2, RoundingMode.HALF_DOWN);
-                income = income.add(multiplyResult);
-            }
-            return income.toString() + " zł";
-        }
-
-        private String hourSum(List<JobDetailsEntity> jobDetail) {
-            double hours = 0.0;
-            for (JobDetailsEntity temp : jobDetail) {
-                hours += temp.getHours();
-            }
-            return Double.toString(hours) + " h";
-        }
-
-
+    private List<JobDetailsEntity> getJobByMonth(JobsEntity job) {
+        int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        return daoJobDetails.findJobsDetailsByMonth(job.getId(), month);
     }
 
+    private List<JobDetailsEntity> getJobByYear(JobsEntity job) {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        return daoJobDetails.findJobsDetailsByYear(job.getId(), year);
+    }
+
+    private ObservableList<JobDetailsEntity> getJobByIdJob(long id) {
+        return daoJobDetails.findByIdJob(id);
+    }
+
+    private String incomeSum(List<JobDetailsEntity> jobDetail) {
+        BigDecimal income = new BigDecimal(0);
+        BigDecimal hours, multiplyResult;
+        for (JobDetailsEntity temp : jobDetail) {
+            hours = new BigDecimal(temp.getHours());
+            multiplyResult = temp.getIncome().multiply(hours).setScale(2, RoundingMode.HALF_DOWN);
+            income = income.add(multiplyResult);
+        }
+        return income.toString() + " zł";
+    }
+
+    private String hourSum(List<JobDetailsEntity> jobDetail) {
+        double hours = 0.0;
+        for (JobDetailsEntity temp : jobDetail) {
+            hours += temp.getHours();
+        }
+        return Double.toString(hours) + " h";
+    }
 }

@@ -31,6 +31,5 @@ public class DAOUsersImpl extends DAOAbstract<UsersEntity> implements DAOUsers {
             em.close();
             return null;
         }
-
     }
 }

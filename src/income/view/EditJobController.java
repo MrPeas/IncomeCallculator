@@ -27,26 +27,26 @@ public class EditJobController {
     private boolean okClicked = false;
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         income.setText("0");
-
     }
 
-@FXML
-public void handleOk(){
-    if(isInputValid()){
-        job.setName(jobName.getText());
-        job.setDeafultincome(new BigDecimal(income.getText()));
-        job.setDescribe(describe.getText());
-        okClicked=true;
-        dialogStage.close();
+    @FXML
+    private void handleOk() {
+        if (isInputValid()) {
+            job.setName(jobName.getText());
+            job.setDeafultincome(new BigDecimal(income.getText()));
+            job.setDescribe(describe.getText());
+            okClicked = true;
+            dialogStage.close();
+        }
     }
-}
 
     @FXML
     private void handleCancel() {
         dialogStage.close();
     }
+
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
     }
@@ -72,18 +72,17 @@ public void handleOk(){
         }
     }
 
-    public boolean isInputValid() {
+    private boolean isInputValid() {
         String errorMessage = "";
         String title = "Złe dane";
         String header = "Wprowadź poprawne dane";
+        AlertUtil alert = new AlertUtil();
         if (!ConverterUtil.isParseToString(jobName.getText())) {
             errorMessage += "Nazwa pracy nie może być pusta!\n";
         }
         if (!ConverterUtil.isParseToBigDecimal(income.getText())) {
             errorMessage += "Zły format, wprowadź liczbę dodatnią!\n";
         }
-        return AlertUtil.isValid(title,header,errorMessage,dialogStage);
+        return alert.isValid(title, header, errorMessage, dialogStage);
     }
-
-
 }

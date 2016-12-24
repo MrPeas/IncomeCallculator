@@ -13,7 +13,9 @@ import java.sql.Date;
         @NamedQuery(name = "JobDetails.findByYear&&idJob", query = "SELECT T  FROM JobDetailsEntity T " +
                 "WHERE T.idJob=:jobId AND FUNC('YEAR',T.wokrDate) =:year"),
         @NamedQuery(name = "JobDetails.findByMonth&&idJob", query = "SELECT T  FROM JobDetailsEntity T " +
-                "WHERE T.idJob=:jobId AND FUNC('MONTH',T.wokrDate) =:month")
+                "WHERE T.idJob=:jobId AND FUNC('MONTH',T.wokrDate) =:month"),
+        @NamedQuery(name = "JobDetails.findByDate&&idJob", query = "SELECT T  FROM JobDetailsEntity T " +
+                "WHERE T.idJob=:jobId AND T.wokrDate =:date")
 })
 @Table(name = "JOBS_DETAILS", schema = "PUBLIC", catalog = "TEST")
 public class JobDetailsEntity {

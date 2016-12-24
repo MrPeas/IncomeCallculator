@@ -18,8 +18,6 @@ public class RegistrationDialogController {
     @FXML
     private TextField username;
     @FXML
-    private TextField email;
-    @FXML
     private PasswordField password;
     @FXML
     private PasswordField passwordConfirm;

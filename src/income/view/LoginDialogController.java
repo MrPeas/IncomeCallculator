@@ -2,7 +2,7 @@ package income.view;
 
 import income.DAO.DAOUsers;
 import income.DAO.DAOUsersImpl;
-import income.Main;
+import income.RootController;
 import income.model.UsersEntity;
 import income.util.AlertUtil;
 import income.util.ConverterUtil;
@@ -26,11 +26,11 @@ public class LoginDialogController {
 
     boolean loginStatus=false;
     private Stage dialogStage;
-    private Main main;
+    private RootController rootController;
     private DAOUsers daoUsers=new DAOUsersImpl();
 
-    public void setMain(Main main) {
-        this.main = main;
+    public void setRootController(RootController rootController) {
+        this.rootController = rootController;
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -48,9 +48,7 @@ public class LoginDialogController {
             user = daoUsers.findByUsername(username.getText().toLowerCase());
             if(checkUser(user)) {
                 this.loginStatus = true;
-                main.setUserId(user.getId());
-                main.setUsername(user.getLogin());
-                user.setLogin("");
+                rootController.setUser(user);
                 user.setPassword("");
                 dialogStage.close();
             }
@@ -62,7 +60,7 @@ public class LoginDialogController {
     @FXML
     private void handleRegistration(){
         AlertUtil alert=new AlertUtil();
-        boolean success=main.registerDialog(dialogStage);
+        boolean success=rootController.registerDialog(dialogStage);
         if(success){
             String title="rejstracja";
             String header="Rejetracja powiodła się";
@@ -88,5 +86,4 @@ public class LoginDialogController {
             return false;
         }
     }
-
 }

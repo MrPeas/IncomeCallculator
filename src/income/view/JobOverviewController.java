@@ -4,7 +4,7 @@ import income.DAO.DAOJobDetails;
 import income.DAO.DAOJobDetailsImpl;
 import income.DAO.DAOJobs;
 import income.DAO.DAOJobsImpl;
-import income.Main;
+import income.RootController;
 import income.model.JobDetailsEntity;
 import income.model.JobsEntity;
 import income.util.AlertUtil;
@@ -52,7 +52,7 @@ public class JobOverviewController {
     @FXML
     private Label hoursInMonth;
 
-    private Main main;
+    private RootController rootController;
     private Stage dialogStage;
     private DAOJobs daoJobs = new DAOJobsImpl();
     private DAOJobDetails daoJobDetails = new DAOJobDetailsImpl();
@@ -77,7 +77,7 @@ public class JobOverviewController {
     @FXML
     private void handleNewJob() {
         JobsEntity job = new JobsEntity();
-        boolean okClicked = main.showEditJob(job);
+        boolean okClicked = rootController.showEditJob(job);
         if (okClicked) {
             job.setIdUser(userId);
             daoJobs.add(job);
@@ -90,7 +90,7 @@ public class JobOverviewController {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
         int index = daoJobs.jobIndex(selectedJob);
         if (selectedJob != null) {
-            boolean okClicked = main.showEditJob(selectedJob);
+            boolean okClicked = rootController.showEditJob(selectedJob);
             if (okClicked) {
                 daoJobs.update(selectedJob);
                 daoJobs.updateJobInList(selectedJob, index);
@@ -116,7 +116,7 @@ public class JobOverviewController {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
         JobDetailsEntity jobDetail = new JobDetailsEntity();
         if (selectedJob != null) {
-            boolean okClicked = main.showEditJobDetails(selectedJob, jobDetail);
+            boolean okClicked = rootController.showEditJobDetails(selectedJob, jobDetail);
             if (okClicked) {
                 daoJobDetails.add(jobDetail);
                 daoJobDetails.addJobDetailToList(jobDetail);
@@ -130,7 +130,7 @@ public class JobOverviewController {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
         int index = daoJobDetails.getJobDetails().indexOf(selectedJobDetails);
         if (selectedJobDetails != null) {
-            boolean okClicked = main.showEditJobDetails(selectedJob, selectedJobDetails);
+            boolean okClicked = rootController.showEditJobDetails(selectedJob, selectedJobDetails);
             if (okClicked) {
                 daoJobDetails.update(selectedJobDetails);
                 daoJobDetails.updateListJobDetail(selectedJobDetails, index);
@@ -156,8 +156,8 @@ public class JobOverviewController {
         }
     }
 
-    public void setMain(Main main, long id) {
-        this.main = main;
+    public void setRootController(RootController rootController, long id) {
+        this.rootController = rootController;
         userId = id;
         jobsTable.setItems(daoJobs.findByIdUser(id));
     }

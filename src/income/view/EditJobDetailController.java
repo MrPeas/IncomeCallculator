@@ -23,9 +23,9 @@ public class EditJobDetailController {
     private Stage dialogStage;
     private JobDetailsEntity jobDetail;
     private JobsEntity job;
-    private DAOJobDetails daoJobDetails=new DAOJobDetailsImpl();
+    private DAOJobDetails daoJobDetails = new DAOJobDetailsImpl();
     private boolean okClicked = false;
-    private boolean edit=false;
+    private boolean edit = false;
 
     @FXML
     private TextField amountOfHours;
@@ -67,13 +67,10 @@ public class EditJobDetailController {
         String header = "Wprowadź poprawne dane";
         AlertUtil alert = new AlertUtil();
         try {
-            if (date == null || date.getValue().toString().length() == 0) {
-                errorMessage += "Wybierz date\n";
-            }else{
-                if(daoJobDetails.isExistJobDetail(job.getId(),Date.valueOf(date.getValue()))&&!edit){
-                    errorMessage += "Data już istnieje w bazie\n";
-                }
+            if (daoJobDetails.isExistJobDetail(job.getId(), Date.valueOf(date.getValue())) && !edit) {
+                errorMessage += "Data już istnieje w bazie\n";
             }
+
         } catch (NullPointerException e) {
             errorMessage += "Wybierz date\n";
         }
@@ -98,16 +95,12 @@ public class EditJobDetailController {
     public void setJobDetail(JobDetailsEntity jobDetail) {
         this.jobDetail = jobDetail;
         if (jobDetail != null) {
-            if (jobDetail.getHours() != null) {
-                amountOfHours.setText(jobDetail.getHours().toString());
-            }
-            if (jobDetail.getIncome() != null) {
-                hourlyWage.setText(jobDetail.getIncome().toString());
-            }
-            if (jobDetail.getWokrDate() != null) {
-                date.setValue(jobDetail.getWokrDate().toLocalDate());
-                edit=true;
-            }
+            amountOfHours.setText(jobDetail.getHours().toString());
+            hourlyWage.setText(jobDetail.getIncome().toString());
+            date.setValue(jobDetail.getWokrDate().toLocalDate());
+            edit = true;
+        } else {
+            this.jobDetail = new JobDetailsEntity();
         }
     }
 

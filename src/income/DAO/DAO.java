@@ -7,7 +7,7 @@ import java.util.List;
  */
 public interface DAO <E> {
     List<E> findAll();
-    boolean add(E entity);
-    boolean update(E entity);
-    boolean remove(Long id);
+    void add(E entity);
+    void update(E entity);
+    void remove(Long id);
 }

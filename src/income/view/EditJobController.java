@@ -59,16 +59,10 @@ public class EditJobController {
         this.job = job;
         if (job != null) {
             jobName.setText(job.getName());
-            if (job.getDeafultincome() == null) {
-                income.setText("0");
-            } else {
-                income.setText(job.getDeafultincome().toString());
-            }
-            if (job.getDescribe() == null) {
-                describe.setText("");
-            } else {
-                describe.setText(job.getDescribe());
-            }
+            income.setText(job.getDeafultincome().toString());
+            describe.setText(job.getDescribe());
+        }else {
+            this.job=new JobsEntity();
         }
     }
 

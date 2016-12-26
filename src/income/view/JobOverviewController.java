@@ -76,7 +76,7 @@ public class JobOverviewController {
 
     @FXML
     private void handleNewJob() {
-        JobsEntity job = new JobsEntity();
+        JobsEntity job = null;
         boolean okClicked = rootController.showEditJob(job);
         if (okClicked) {
             job.setIdUser(userId);
@@ -114,7 +114,7 @@ public class JobOverviewController {
     @FXML
     private void handleNewJobDetail() {
         JobsEntity selectedJob = jobsTable.getSelectionModel().getSelectedItem();
-        JobDetailsEntity jobDetail = new JobDetailsEntity();
+        JobDetailsEntity jobDetail = null;
         if (selectedJob != null) {
             boolean okClicked = rootController.showEditJobDetails(selectedJob, jobDetail);
             if (okClicked) {
@@ -218,10 +218,7 @@ public class JobOverviewController {
     }
 
     private String hourSum(List<JobDetailsEntity> jobDetail) {
-        double hours = 0.0;
-        for (JobDetailsEntity temp : jobDetail) {
-            hours += temp.getHours();
-        }
+        double hours = jobDetail.stream().mapToDouble(JobDetailsEntity::getHours).sum();
         return Double.toString(hours) + " h";
     }
 }

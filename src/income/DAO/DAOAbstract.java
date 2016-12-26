@@ -20,44 +20,27 @@ public abstract class DAOAbstract<E> implements DAO<E> {
                         .getActualTypeArguments()[0];
     }
 
-    public boolean add(E entity) {
-        try {
+    public void add(E entity) {
             em = EmProvider.getInstance().createEm();
             em.getTransaction().begin();
             em.persist(entity);
             em.getTransaction().commit();
-            return true;
-
-        }catch(Exception e){
-            return false;
-        }
     }
 
-    public boolean update(E entity) {
-        try {
+    public void update(E entity) {
             em = EmProvider.getInstance().createEm();
             em.getTransaction().begin();
             em.merge(entity);
             em.getTransaction().commit();
             EmProvider.getInstance().closeEm(em);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
-    public boolean remove(Long id) {
-        try {
+    public void remove(Long id) {
             em = EmProvider.getInstance().createEm();
             E job = em.find(typeClass, id);
             em.getTransaction().begin();
             em.remove(job);
             em.getTransaction().commit();
             EmProvider.getInstance().closeEm(em);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 }

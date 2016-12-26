@@ -66,15 +66,15 @@ public class RegistrationDialogController {
         }
         if (!ConverterUtil.isParseToString(password.getText())) {
             errorMessage += "hasło nie może być puste!\n";
-        } else {
-            if (!ConverterUtil.isParseToString(passwordConfirm.getText())) {
-                errorMessage += "brak potwierdzenia hasła!\n";
-            } else {
-                if (password.getText().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$"))
-                    if (!passwordConfirm.getText().equals(password.getText())) {
-                        errorMessage += "hasła muszą być identyczne\n";
-                    }
-            }
+        }
+        if (!ConverterUtil.isParseToString(passwordConfirm.getText())) {
+            errorMessage += "brak potwierdzenia hasła!\n";
+        }
+        if (password.getText().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
+            errorMessage += "hasło musi zawierać cyfry i litery\n";
+        }
+        if (!passwordConfirm.getText().equals(password.getText())) {
+            errorMessage += "hasła muszą być identyczne\n";
         }
         return alert.isValid(title, header, errorMessage, dialogStage);
     }
